@@ -1,0 +1,193 @@
+<?php
+
+include 'config.php';
+
+session_start();
+// Check if the user is logged in, if not then redirect him to login page
+if (!isset($_SESSION["whale_enterprises_loggedin"]) || $_SESSION["whale_enterprises_loggedin"] !== true) {
+    header("location: login.php");
+    exit;
+}
+$username = $_SESSION["username"];
+
+error_reporting(0); // For not showing any error
+$sql = "SELECT * FROM users Where username IN ('$username')";
+$result = mysqli_query($link, $sql);
+$row = mysqli_fetch_assoc($result);
+$admin = trim($row['designation']);
+?>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Whale Enterprises Pvt Ltd</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="icon" type="image/x-icon" href="./assets/logo.png">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css'>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+    <script type="text/javascript" src="./js/script.js"></script>
+</head>
+<style>
+    body {
+        background: linear-gradient(to right, #ecf0fb, #f5f6f8);
+    }
+
+    .userlist {
+        transform: scale(.95);
+
+    }
+</style>
+
+<body>
+    <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
+        <nav>
+            <div class="logo">
+                <img class="logo-c" src=".\assets\logo.png">
+                <h1>Whale Enterprises Pvt Ltd.</h1>
+            </div>
+            <div class="hamburger">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.php">Home</a></li>
+                <li><a href="view-only.php">Documents</a></li>
+                <li><a href="#" style="color:#fff" class="active">User Details</a></li>
+                <li><a href="profile.php">Profile</a></li>
+                <li><a href="logout.php" class="join-button">Logout</a></li>
+            </ul>
+        </nav>
+        <section class="userlist">
+            <?php
+            if (isset($_COOKIE['status'])) {
+                printf("<center><p>" . $_COOKIE['status'] . "</p></center>");
+            }
+            ?>
+            <h1>User Access Control</h1>
+            <div class="search-box">
+                <form class="search-box" action="" method="post">
+                    <input class="search-bar" type="text" name="filter-value" placeholder="Search Here!" />
+                    <button name="filter" class="search_details">Search</button>
+                </form>
+            </div>
+            <table class="rwd-table">
+                <tbody>
+                    <tr>
+                        <th>S.No</th>
+                        <th>Email ID</th>
+                        <th>Name</th>
+                        <th>Sector</th>
+                        <th>Phone Number</th>
+                        <th>Designation</th>
+                        <th> </th>
+                    </tr>
+                    <?php
+                    if (isset($_POST['filter'])) {
+                        $value_filter = $_POST['filter-value'];
+                        if (trim($admin) == 'Admin') {
+                            $search_sql = "SELECT * from users where CONCAT(username, name, sector, phone_number, designation) LIKE '%$value_filter%' and username != '$username' and designation != 'SuperAdmin' and designation != 'Admin'";
+                        } else {
+                            $search_sql = "SELECT * from users where CONCAT(username, name, sector, phone_number, designation) LIKE '%$value_filter%' and username != '$username' and designation != 'SuperAdmin'";
+                        }
+                        $search_result = mysqli_query($link, $search_sql);
+                        if (mysqli_num_rows($search_result) > 0) {
+                            $s_no = 1;
+                            while ($search_row = mysqli_fetch_assoc($search_result)) { ?>
+                                <tr id='display'>
+                                    <td data-th="S.No">
+                                        <?php echo $s_no;
+                                        $s_no += 1; ?>
+                                    </td>
+                                    <td data-th="Email ID">
+                                        <?php echo $search_row['username']; ?>
+                                    </td>
+                                    <td data-th="Name">
+                                        <?php echo $search_row['name']; ?>
+                                    </td>
+                                    <td data-th="Sector">
+                                        <?php echo $search_row['sector']; ?>
+
+                                    </td>
+                                    <td data-th="Phone Number">
+                                        <?php echo $search_row['phone_number']; ?>
+                                    </td>
+                                    <td data-th="Designation">
+                                        <?php echo $search_row['designation']; ?>
+                                    </td>
+                                    <td data-th="">
+                                        <form action="update-details.php" method='POST' class="table-forms">
+                                            <input style="cursor: pointer;" type="hidden" name="userid" value="<?php echo $search_row['username']; ?>" />
+                                            <button type="submit" class="update_details" data-modal="modalOne" name="update_details">View</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <?php
+                            }
+                        } else { ?>
+                            <tr id='display'>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td>
+                                    <p>No Record Found</p>
+                                </td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <?php
+                        }
+                    }
+                    if (isset($_POST['filter']) == false) {
+                        if (trim($admin) == 'SuperAdmin') {
+                            $sql = "SELECT * FROM users WHERE username != '$username'  and designation != 'SuperAdmin' ORDER BY id DESC";
+                        } else {
+                            $sql = "SELECT * FROM users WHERE username != '$username'  and designation != 'SuperAdmin' and designation != 'Admin' ORDER BY id DESC";
+                        }
+                        $result = mysqli_query($link, $sql);
+                        if (mysqli_num_rows($result) > 0) {
+                            $s_no = 1;
+                            while ($row = mysqli_fetch_assoc($result)) { ?>
+                                <tr id='display'>
+                                    <td data-th="S.No">
+                                        <?php echo $s_no;
+                                        $s_no += 1; ?>
+                                    </td>
+                                    <td data-th="Email ID">
+                                        <?php echo $row['username']; ?>
+                                    </td>
+                                    <td data-th="Name">
+                                        <?php echo $row['name']; ?>
+                                    </td>
+                                    <td data-th="Sector">
+                                        <?php echo $row['sector']; ?>
+
+                                    </td>
+                                    <td data-th="Phone Number">
+                                        <?php echo $row['phone_number']; ?>
+                                    </td>
+                                    <td data-th="Designation">
+                                        <?php echo $row['designation']; ?>
+                                    </td>
+                                    <td data-th="">
+                                        <form action="update-details.php" method='POST' class="table-forms">
+                                            <input type="hidden" name="userid" value="<?php echo $row['username']; ?>" />
+                                            <button type="submit" class="update_details button" data-modal="modalOne" name="update_details">View</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                    <?php }
+                        }
+                    } ?>
+                </tbody>
+            </table>
+        </section>
+    <?php } ?>
+</body>
+<script src="./js/nav.js"></script>
+
+</html>
