@@ -21,40 +21,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (empty(trim($_POST["username"]))) {
         $username_err = "Please enter your Mail ID.";
     } else {
+        $username = trim($_POST["username"]);
         // Prepare a select statement
-        $sql = "SELECT phone_number FROM users WHERE username = '$username'";
+        $sql = "SELECT username FROM `users` WHERE username = '$username'";
+        echo $sql;
+        $result = mysqli_query($link, $sql);
+        if (mysqli_num_rows($result) == 1) {
+            $password_result = exec("python ./python/password_reset.py" . " $username");
+            echo $password_result;
 
-        if ($stmt = mysqli_prepare($link, $sql)) {
-            // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "s", $param_username);
+            $url = "verify-otp.php"; // replace with the URL of the API endpoint
+            $data = array(
+                "username" => "$username"
+            ); // replace with the parameters you want to send
 
-            // Set parameters
-            $param_username = trim($_POST["username"]);
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, $url);
+            curl_setopt($curl, CURLOPT_POST, true);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($curl);
+            curl_close($curl);
 
-            // Attempt to execute the prepared statement
-            if (mysqli_stmt_execute($stmt)) {
-                /* store result */
-                mysqli_stmt_store_result($stmt);
-
-                if (mysqli_stmt_num_rows($stmt) == 1) {
-                    $result = shell_exec('./python/password_reset.py' . $username);
-                    header('Location: verify-otp.php');
-                } else {
-                    // Username doesn't exist, display a generic error message
-                    $login_err = "Mail ID does not exists.";
-                }
-            } else {
-                echo "Oops! Something went wrong. Please try again later.";
-            }
-
-            // Close statement
-            mysqli_stmt_close($stmt);
+            // do something with the response
+            echo $response;
+            $_SESSION["forget-password-whale-username"] = $username;
+            header("Location: verify-otp.php?username=" . urlencode($data["username"]));
+        } else {
+            // Username doesn't exist, display a generic error message
+            $login_err = "Mail ID does not exists.";
         }
     }
 
-    // Close connection
-    mysqli_close($link);
+    // Close statement
+    mysqli_stmt_close($stmt);
 }
+
+
+// Close connection
+mysqli_close($link);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -138,7 +144,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             </div>
                         </div>
                         <div class="footer-link padding-top--24">
-                            <span>Don't Have an account? <a href="./register.php" style="color: blue; cursor: pointer;"> Create an Account</a></span>
+                            <span>Don't Have an account? <a href="#" style="color: blue; cursor: pointer;"> Contact Administrator</a></span>
                             <div class="listing padding-top--24 padding-bottom--24 flex-flex center-center">
                                 <span><a href="#">Contact</a></span>
                                 <span><a href="#">Privacy & terms</a></span>

@@ -10,7 +10,7 @@ if (!isset($_SESSION["whale_enterprises_loggedin"]) || $_SESSION["whale_enterpri
 }
 $usernamee = $_SESSION["username"];
 
-//error_reporting(0); // For not showing any error
+error_reporting(0); // For not showing any error
 $sql = "SELECT * FROM users Where username IN ('$usernamee')";
 $result = mysqli_query($link, $sql);
 $row = mysqli_fetch_assoc($result);
@@ -167,6 +167,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </navy>
             </div>
             <?php
+            $sector_sql = "SELECT * FROM `sectors` WHERE username = '$usernamee'";
+            $sector_result = mysqli_query($link, $sector_sql);
+            $multi_sector = '';
+            while ($sector_row = mysqli_fetch_assoc($sector_result)) {
+                $multi_sector = $multi_sector . $sector_row['sector'] . ' , ';
+            }
+
             $sql = "SELECT * FROM `users` WHERE username = '$usernamee'";
             $result = mysqli_query($link, $sql);
             if (mysqli_num_rows($result) > 0) {
@@ -180,7 +187,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <h2>Full Name</h2>
                             <p><?php echo $row['name'] ?></p>
                             <h2>Sector</h2>
-                            <p><?php echo $row['sector'] ?></p>
+                            <p><?php echo rtrim($multi_sector, ", "); ?></p>
                             <h2>Phone Number</h2>
                             <p><?php echo $row['phone_number'] ?></p>
                             <h2>Designation</h2>

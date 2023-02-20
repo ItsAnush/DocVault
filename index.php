@@ -115,7 +115,7 @@ $personal_number = $row['phone_number'];
         <h3 class="admin-sectors-title">Sectors for You</h3>
         <div class="overall">
             <form action="view-only.php" method="POST">
-                <input type="hidden" name="sector-1" value="parts">
+                <input type="hidden" name="sector-1" value="Parts">
                 <button name="parts-btn">
                     <div class="main blue-border">
                         <div id="parts" class="out_body"></div>
@@ -124,7 +124,7 @@ $personal_number = $row['phone_number'];
                 </button>
             </form>
             <form action="view-only.php" method="POST">
-                <input type="hidden" name="sector-2" value="fabrication">
+                <input type="hidden" name="sector-2" value="Fabrication">
                 <button name="tankers-btn">
                     <div class="main green-border">
                         <div id="tankers" class="out_body"></div>
@@ -184,10 +184,20 @@ $personal_number = $row['phone_number'];
                             <div class="form-group">
                                 <select class="form-control" name="sector" id="sector" required>
                                     <option value="Not Selected">-- SELECT --</option>
-                                    <option value="Fabrication">Fabrication</option>
-                                    <option value="Parts">Parts</option>
-                                    <option value="New Product Development">New Product Development</option>
-                                    <option value="Machine Shop">Machine Shop</option>
+                                    <?php
+                                    $sector_sql = "SELECT * FROM `sectors` WHERE username = '$username'";
+                                    $sector_result = mysqli_query($link, $sector_sql);
+                                    $multi_sector = array();
+                                    while ($sector_row = mysqli_fetch_assoc($sector_result)) {
+                                        $sector = array_push($multi_sector, $sector_row['sector']);
+                                    }
+                                    $length = count($multi_sector);
+                                    for ($i = 0; $i < $length; $i++) {
+                                    ?>
+                                        <option value="<?php echo $multi_sector[$i] ?>"><?php echo $multi_sector[$i] ?></option>
+                                    <?php
+                                        unset($multi_sector[$i]);
+                                    } ?>
                                 </select>
                             </div>
                             <br />

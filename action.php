@@ -12,6 +12,15 @@ $username = $_SESSION["username"];
 error_reporting(0); // For not showing any error
 $sql = "SELECT * FROM student_details Where email IN ('$username')";
 
+function myfunction($a, $b)
+{
+    if ($a === $b) {
+        return 0;
+    }
+    return ($a > $b) ? 1 : -1;
+}
+
+
 if (isset($_POST['submit'])) {
     $pname = $_FILES["file"]['name'];
     $tname = $_FILES["files"]["tmp_name"];
@@ -65,16 +74,32 @@ if (isset($_POST['update-details'])) {
     $emp_name = $_POST['emp_name'];
     $emp_number = $_POST['emp_number'];
     $sector = $_POST['sector'];
-    $privilege = $_POST['privilege'];
+    $privilege = trim($_POST['privilege']);
     $emp_username = $_POST['emp_username'];
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // retrieve the selected values from the form data
+        $selectedOptions = $_POST['selectedOptions'];
+        // process the selected values as needed
+        var_dump($selectedOptions);
+
+        $length = count($selectedOptions);
+    }
+
+    $sector_sql = "DELETE FROM `sectors` WHERE username = '$emp_username'";
+    echo $sector_sql;
+    $sector_result = mysqli_query($link, $sector_sql);
+    for ($i = 0; $i < $length; $i++) {
+        $sql = "INSERT INTO `sectors` (username, sector) VALUES ('$emp_username', '$selectedOptions[$i]')";
+        mysqli_query($link, $sql);
+    }
 
     if ($privilege != '') {
-        $sql = "UPDATE `whale_enterprises`.`users` SET name = '$emp_name', phone_number = '$emp_number', sector = '$sector', designation = '$privilege' where username = '$emp_username'";
+        $update_sql = "UPDATE `whale_enterprises`.`users` SET name = '$emp_name', phone_number = '$emp_number', designation = '$privilege' where username = '$emp_username'";
     } else {
-        $sql = "UPDATE `whale_enterprises`.`users` SET name = '$emp_name', phone_number = '$emp_number', sector = '$sector' where username = '$emp_username'";
+        $update_sql = "UPDATE `whale_enterprises`.`users` SET name = '$emp_name', phone_number = '$emp_number' where username = '$emp_username'";
     }
-    echo $sql;
-    if (mysqli_query($link, $sql)) {
+    echo $update_sql;
+    if (mysqli_query($link, $update_sql)) {
         setcookie("status", "Successfully Updated the Details of user : $emp_username", time() + (7), "/");
         echo "<center><p style='color:green';>Successfully Updated the Details of user : $emp_username</p></center>";
     } else {

@@ -15,7 +15,19 @@ $sql = "SELECT * FROM users Where username IN ('$username')";
 $result = mysqli_query($link, $sql);
 $row = mysqli_fetch_assoc($result);
 $admin = trim($row['designation']);
+
+
+
+$sector_sql = "SELECT * FROM `sectors` WHERE username = '$userid'";
+$sector_result = mysqli_query($link, $sector_sql);
+$multi_sector = '';
+while ($sector_row = mysqli_fetch_assoc($sector_result)) {
+    $multi_sector = $multi_sector . $sector_row['sector'] . ' , ';
+}
+
+
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -42,6 +54,62 @@ $admin = trim($row['designation']);
 
     body {
         max-height: 100vh !important;
+    }
+
+    .select-dropdown {
+        position: relative;
+        height: 30px;
+        width: 98%;
+        border: 1px solid;
+        border-image: linear-gradient(to right, #0c48db, #ffffff) 0 0 1 0%;
+        background-color: #fff;
+        font-size: 14px;
+        font-family: "Roboto", sans-serif;
+        margin-top: 0;
+        padding-top: 0;
+        top: -18px;
+    }
+
+    .select-dropdown__header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 5px;
+        cursor: pointer;
+
+    }
+
+
+
+    .select-dropdown__toggle {
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 5px 4px 0 4px;
+        border-color: #333 transparent transparent transparent;
+    }
+
+    .select-dropdown__options {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1;
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-top: none;
+        display: none;
+    }
+
+    .select-dropdown__options label {
+        display: block;
+        padding: 5px 10px;
+    }
+
+    .select-dropdown__options input[type="checkbox"] {
+        margin-right: 5px;
     }
 </style>
 
@@ -100,19 +168,33 @@ $admin = trim($row['designation']);
                 <div class="rightbox">
                     <div class="profile">
                         <h1>Update Details of <?php echo $row['name'] ?></h1>
-                        <form action="action.php" method="post">
+                        <form action="action.php" method="post" id="myForm">
                             <label>Full Name</label>
-                            <input type="text" class="form-control" name="emp_name" placeholder="Enter Employee Name" value="<?php echo $row['name'] ?>" required><br />
+                            <input type="text" class="form-control" name="emp_name" placeholder="Enter Employeex` Name" value="<?php echo $row['name'] ?>" required><br />
                             <label>Phone Number</label>
                             <input type="text" class="form-control" name="emp_number" placeholder="Enter Phone Number" value="<?php echo $row['phone_number'] ?>" required><br />
                             <label>Sector</label>
-                            <select class="form-control" name="sector" id="sector">
-                                <option value=" <?php echo $row['sector'] ?>"><?php echo $row['sector'] ?></option>
-                                <option value="Fabrication">Fabrication</option>
-                                <option value="Parts">Parts</option>
-                                <option value="New Product Development">New Product Development</option>
-                                <option value="Machine Shop">Machine Shop</option>
-                            </select><br />
+                            <br />
+                            <div class="select-dropdown">
+                                <div class="select-dropdown__header">
+                                    <div class="select-dropdown__title">Select Sector</div>
+                                    <div class="select-dropdown__toggle"></div>
+                                </div>
+                                <div class="select-dropdown__options" selectedOptions[]>
+                                    <label>
+                                        <input type="checkbox" value="Fabrication">Fabrication
+                                    </label>
+                                    <label>
+                                        <input type="checkbox" value="Parts">Parts
+                                    </label>
+                                    <label>
+                                        <input type="checkbox" value="New Product Development">New Product Development
+                                    </label>
+                                    <label>
+                                        <input type="checkbox" value="Machine Shop">Machine Shop
+                                    </label>
+                                </div>
+                            </div>
                             <?php if (trim($admin) == 'SuperAdmin') { ?>
                                 <label>privilege</label>
                                 <select class="form-control" name="privilege" id="privilege">
@@ -120,7 +202,9 @@ $admin = trim($row['designation']);
                                     <option value="Admin">Admin</option>
                                     <option value="User">User</option>
                                 </select><br />
-                                <input type="hidden" name="emp_username" value="<?php echo $row['username'] ?>">
+                            <?php }
+                            if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
+                                <input style="display:none" type="text" name="emp_username" value="<?php echo $row['username'] ?>">
                                 <div class="flex-row">
                                     <button type="submit" class="btnRegister" name="update-details" onclick="return confirm('Are you sure you want to Submit?')" value="Submit">Update</button>
                                     <button type="submit" class="btnRegister delete" onclick="return confirm('Are you sure you want to Delete?')" name="delete-user">Delete</button>
@@ -142,5 +226,62 @@ $admin = trim($row['designation']);
 
 </body>
 
+
+
+
+<script>
+    const form = document.querySelector('#myForm'); // replace 'myForm' with the ID of your form
+    const dropdown = document.querySelector('.select-dropdown');
+    const header = dropdown.querySelector('.select-dropdown__header');
+    const toggle = header.querySelector('.select-dropdown__toggle');
+    const options = dropdown.querySelector('.select-dropdown__options');
+    const checkboxes = options.querySelectorAll('input[type="checkbox"]');
+
+    function toggleOptions() {
+        options.style.display = options.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function handleCheckboxChange() {
+        const selectedOptions = Array.from(checkboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.value);
+
+        // remove previously added hidden input fields
+        form.querySelectorAll('input[type="hidden"]').forEach(hiddenInput => {
+            hiddenInput.parentNode.removeChild(hiddenInput);
+        });
+
+        // create new hidden input fields with the selected values and append to the form
+        selectedOptions.forEach(option => {
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'selectedOptions[]'; // add [] to the name to pass the values as an array
+            hiddenInput.value = option;
+            form.appendChild(hiddenInput);
+        });
+    }
+
+    header.addEventListener('click', toggleOptions);
+    checkboxes.forEach(checkbox => checkbox.addEventListener('change', handleCheckboxChange));
+
+    form.addEventListener('submit', (event) => {
+        // submit the form using POST method
+        const formData = new FormData(form);
+        const selectedOptions = formData.getAll('selectedOptions[]');
+        if (selectedOptions.length > 0) {
+            // prevent the form from submitting normally if there are selected options
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                console.log(response);
+                // handle the response as needed
+            }).catch(error => {
+                console.error(error);
+                // handle the error as needed
+            });
+        }
+    });
+</script>
 
 </html>

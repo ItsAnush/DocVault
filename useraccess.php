@@ -9,8 +9,10 @@ if (!isset($_SESSION["whale_enterprises_loggedin"]) || $_SESSION["whale_enterpri
     exit;
 }
 $username = $_SESSION["username"];
-
 error_reporting(0); // For not showing any error
+
+
+
 $sql = "SELECT * FROM users Where username IN ('$username')";
 $result = mysqli_query($link, $sql);
 $row = mysqli_fetch_assoc($result);
@@ -23,7 +25,6 @@ $admin = trim($row['designation']);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Whale Enterprises Pvt Ltd</title>
     <link rel="stylesheet" href="./css/style.css">
     <link rel="icon" type="image/x-icon" href="./assets/logo.png">
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css'>
@@ -89,14 +90,22 @@ $admin = trim($row['designation']);
                     if (isset($_POST['filter'])) {
                         $value_filter = $_POST['filter-value'];
                         if (trim($admin) == 'Admin') {
-                            $search_sql = "SELECT * from users where CONCAT(username, name, sector, phone_number, designation) LIKE '%$value_filter%' and username != '$username' and designation != 'SuperAdmin' and designation != 'Admin'";
+                            $search_sql = "SELECT * from users where CONCAT(username, name, sector, phone_number, designation) LIKE '%$value_filter%' and username != '$username' and designation NOT LIKE '%SuperAdmin%' and designation NOT LIKE '%Admin'";
                         } else {
-                            $search_sql = "SELECT * from users where CONCAT(username, name, sector, phone_number, designation) LIKE '%$value_filter%' and username != '$username' and designation != 'SuperAdmin'";
+                            $search_sql = "SELECT * from users where CONCAT(username, name, sector, phone_number, designation) LIKE '%$value_filter%' and username != '$username' and designation NOT LIKE '%SuperAdmin%'";
                         }
                         $search_result = mysqli_query($link, $search_sql);
                         if (mysqli_num_rows($search_result) > 0) {
                             $s_no = 1;
-                            while ($search_row = mysqli_fetch_assoc($search_result)) { ?>
+                            while ($search_row = mysqli_fetch_assoc($search_result)) {
+                                $search_username = $search_row['username'];
+                                $sector_sql = "SELECT * FROM `sectors` WHERE username = '$search_username'";
+                                $sector_result = mysqli_query($link, $sector_sql);
+                                $multi_sector = '';
+                                while ($sector_row = mysqli_fetch_assoc($sector_result)) {
+                                    $multi_sector = $multi_sector . $sector_row['sector'] . ' , ';
+                                }
+                    ?>
                                 <tr id='display'>
                                     <td data-th="S.No">
                                         <?php echo $s_no;
@@ -109,7 +118,7 @@ $admin = trim($row['designation']);
                                         <?php echo $search_row['name']; ?>
                                     </td>
                                     <td data-th="Sector">
-                                        <?php echo $search_row['sector']; ?>
+                                        <?php echo rtrim($multi_sector, ", "); ?>
 
                                     </td>
                                     <td data-th="Phone Number">
@@ -151,7 +160,14 @@ $admin = trim($row['designation']);
                         $result = mysqli_query($link, $sql);
                         if (mysqli_num_rows($result) > 0) {
                             $s_no = 1;
-                            while ($row = mysqli_fetch_assoc($result)) { ?>
+                            while ($row = mysqli_fetch_assoc($result)) {
+                                $search_username = $row['username'];
+                                $sector_sql = "SELECT * FROM `sectors` WHERE username = '$search_username'";
+                                $sector_result = mysqli_query($link, $sector_sql);
+                                $multi_sector = '';
+                                while ($sector_row = mysqli_fetch_assoc($sector_result)) {
+                                    $multi_sector = $multi_sector . $sector_row['sector'] . ' , ';
+                                } ?>
                                 <tr id='display'>
                                     <td data-th="S.No">
                                         <?php echo $s_no;
@@ -164,7 +180,7 @@ $admin = trim($row['designation']);
                                         <?php echo $row['name']; ?>
                                     </td>
                                     <td data-th="Sector">
-                                        <?php echo $row['sector']; ?>
+                                        <?php echo rtrim($multi_sector, ", "); ?>
 
                                     </td>
                                     <td data-th="Phone Number">
