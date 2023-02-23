@@ -1,14 +1,16 @@
 <?php
 // Initialize the session
 session_start();
+require_once "config.php";
+require 'front-controller.php';
+
 // Check if the user is already logged in, if yes then redirect him to welcome page
 if (isset($_SESSION["whale_enterprises_loggedin"]) && $_SESSION["whale_enterprises_loggedin"] === true) {
-    header("location: index.php");
+    header("location: index");
     exit;
 }
 error_reporting(0);
 // Include config file
-require_once "config.php";
 
 // Define variables and initialize with empty values
 $username = $password = "";
@@ -37,7 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (mysqli_num_rows($result) == 1) {
             $row = mysqli_fetch_assoc($result);
             if ($row['code'] == $password) {
-                $url = "new-password.php"; // replace with the URL of the API endpoint
+                $url = "new-password"; // replace with the URL of the API endpoint
                 $data = array(
                     "username" => "$username"
                 ); // replace with the parameters you want to send
@@ -55,19 +57,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION["forget-password-whale-username"] = $self_user;
                 $sql = "UPDATE `users` SET code = '0' WHERE username = '$self_user'";
                 $result = mysqli_query($link, $sql);
-                header("Location: new-password.php?username=" . urlencode($data["username"]));
+                header("Location: new-password?username=" . urlencode($data["username"]));
             }
         } else {
             // Password is not valid, display a generic error message
             $otp_error = "Entered OTP is incorrect";
             $_SESSION['otp_error'] = $otp_error;
-            header("Location: verify-otp.php");
+            header("Location: verify-otp");
         }
     } else {
         // Password is not valid, display a generic error message
         $otp_error = "Entered OTP is incorrect";
         $_SESSION['otp_error'] = $otp_error;
-        header("Location: verify-otp.php");
+        header("Location: verify-otp");
     }
 }
 

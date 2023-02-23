@@ -1,6 +1,8 @@
 <?php
 
 include 'config.php';
+require_once "config.php";
+require 'front-controller.php';
 
 session_start();
 // Check if the user is logged in, if not then redirect him to login page
@@ -71,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                 // Store data in session variables
                                 $_SESSION["Success"] = "You have successfully reset your Password!";
-                                header("location: login.php");
+                                header("location: login");
                             } else {
                                 echo "Oops! Something went wrong. Please try again later.";
                             }
@@ -136,7 +138,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                         <span class="invalid-feedback"><?php echo $confirm_password_err; ?></span>
                                     </div>
                                     <div class="field padding-bottom--24">
-                                        <input style="background: blue;" href="create_account.php" type="submit" value="Reset">
+                                        <input style="background: blue;" type="submit" value="Reset">
                                     </div>
                                     <input type="hidden" name='self_user' value="<?php echo $username; ?>">
                                 </form>

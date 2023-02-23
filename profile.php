@@ -1,10 +1,11 @@
 <?php
 include 'config.php';
+require 'front-controller.php';
 
 session_start();
 // Check if the user is logged in, if not then redirect him to login page
 if (!isset($_SESSION["whale_enterprises_loggedin"]) || $_SESSION["whale_enterprises_loggedin"] !== true) {
-    header("location: login.php");
+    header("location: login");
     exit;
 }
 $usernamee = $_SESSION["username"];
@@ -73,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                 // Store data in session variables
                                 $_SESSION["Success"] = "You have successfully reset your Password!";
-                                header("location: profile.php");
+                                header("location: profile");
                             } else {
                                 echo "Oops! Something went wrong. Please try again later.";
                             }
@@ -124,11 +125,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="line3"></div>
             </div>
             <ul class="nav-links">
-                <li><a href="index.php">Home</a></li>
-                <li><a href="view-only.php">Documents</a></li>
-                <li><a href="useraccess.php">User Details</a></li>
+                <li><a href="index">Home</a></li>
+                <li><a href="view-only">Documents</a></li>
+                <li><a href="useraccess">User Details</a></li>
                 <li><a href="#" style="color:#fff" class="active">Profile</a></li>
-                <li><a href="logout.php" class="join-button">Logout</a></li>
+                <li><a href="logout" class="join-button">Logout</a></li>
             </ul>
         </nav>
     <?php }
@@ -145,10 +146,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="line3"></div>
             </div>
             <ul class="nav-links">
-                <li><a href="index.php">Home</a></li>
-                <li><a href="view-only.php">Documents</a></li>
+                <li><a href="index">Home</a></li>
+                <li><a href="view-only">Documents</a></li>
                 <li><a href="#" style="color:#fff" class="active">Profile</a></li>
-                <li><a href="logout.php" class="join-button">Logout</a></li>
+                <li><a href="logout" class="join-button">Logout</a></li>
             </ul>
         </nav>
     <?php } ?>
@@ -226,7 +227,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $sql = "SELECT * FROM `users` WHERE username = '$usernamee'";
                     $result = mysqli_query($link, $sql);
                     $row = mysqli_fetch_assoc($result) ?>
-                    <form action="action.php" method="post">
+                    <form action="action" method="post">
                         <label>Full Name</label>
                         <input type="text" class="form-control" name="name" value="<?php echo $row['name'] ?>" required />
                         <br />

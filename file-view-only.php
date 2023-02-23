@@ -1,11 +1,12 @@
 <?php
 
 include 'config.php';
+require 'front-controller.php';
 
 session_start();
 // Check if the user is logged in, if not then redirect him to login page
 if (!isset($_SESSION["whale_enterprises_loggedin"]) || $_SESSION["whale_enterprises_loggedin"] !== true) {
-    header("location: login.php");
+    header("location: login");
     exit;
 }
 $username = $_SESSION["username"];
@@ -84,11 +85,11 @@ $sector_filter = $_POST['sector'];
                 <div class="line3"></div>
             </div>
             <ul class="nav-links">
-                <li><a href="index.php">Home</a></li>
-                <li><a href="view-only.php" style="color:#fff" class="active">Documents</a></li>
-                <li><a href="useraccess.php">User Details</a></li>
-                <li><a href="profile.php">Profile</a></li>
-                <li><a href="logout.php" class="join-button">Logout</a></li>
+                <li><a href="index">Home</a></li>
+                <li><a href="view-only" style="color:#fff" class="active">Documents</a></li>
+                <li><a href="useraccess">User Details</a></li>
+                <li><a href="profile">Profile</a></li>
+                <li><a href="logout" class="join-button">Logout</a></li>
             </ul>
         </nav>
     <?php }
@@ -104,10 +105,10 @@ $sector_filter = $_POST['sector'];
                 <div class="line3"></div>
             </div>
             <ul class="nav-links">
-                <li><a href="index.php">Home</a></li>
-                <li><a href="view-only.php" style="color:#fff" class="active">Documents</a></li>
-                <li><a href="profile.php">Profile</a></li>
-                <li><a href="logout.php" class="join-button">Logout</a></li>
+                <li><a href="index">Home</a></li>
+                <li><a href="view-only" style="color:#fff" class="active">Documents</a></li>
+                <li><a href="profile">Profile</a></li>
+                <li><a href="logout" class="join-button">Logout</a></li>
             </ul>
         </nav>
     <?php } ?>

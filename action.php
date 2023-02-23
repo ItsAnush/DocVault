@@ -1,10 +1,11 @@
 <?php
 include 'config.php';
+require 'front-controller.php';
 
 session_start();
 // Check if the user is logged in, if not then redirect him to login page
 if (!isset($_SESSION["whale_enterprises_loggedin"]) || $_SESSION["whale_enterprises_loggedin"] !== true) {
-    header("location: login.php");
+    header("location: login");
     exit;
 }
 $username = $_SESSION["username"];
@@ -110,7 +111,7 @@ if (isset($_POST['submit'])) {
     } else {
         #echo "file is not valid type";
     }
-    header('Location: index.php');
+    header('Location: index');
 }
 
 if (isset($_POST['delete-user'])) {
@@ -123,7 +124,7 @@ if (isset($_POST['delete-user'])) {
         setcookie("status", "Deletion Failed for the user : $emp_username.", time() + (7), "/");
         #echo "<center><p style='color:red';>Deletion Failed for the user : $emp_username.</p></center>";
     }
-    header('Location: useraccess.php');
+    header('Location: useraccess');
 }
 if (isset($_POST['update-details'])) {
     $emp_name = $_POST['emp_name'];
@@ -161,7 +162,7 @@ if (isset($_POST['update-details'])) {
         setcookie("status", "Update Failed for the user : $emp_username.", time() + (7), "/");
         #echo "<center><p style='color:red';>Update Failed for the user : $emp_username.</p></center>";
     }
-    header('Location: useraccess.php');
+    header('Location: useraccess');
 }
 if (isset($_POST['profile-update-details'])) {
     $name = $_POST['name'];
@@ -175,7 +176,7 @@ if (isset($_POST['profile-update-details'])) {
         setcookie("profile_status", "Update Failed for the user : $emp_username.", time() + (7), "/");
         #echo "<center><p style='color:red';>Update Failed.</p></center>";
     }
-    header('Location: profile.php');
+    header('Location: profile');
 }
 if (isset($_POST['delete-pdf-btn'])) {
     $file_name = $_POST['delete-pdf'];
@@ -199,5 +200,5 @@ if (isset($_POST['delete-pdf-btn'])) {
         #echo "Sorry!";
     }
 
-    header('Location: view-only.php');
+    header('Location: view-only');
 }

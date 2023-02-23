@@ -1,7 +1,7 @@
 <?php
 
 include 'config.php';
-
+require 'front-controller.php';
 session_start();
 // Check if the user is logged in, if not then redirect him to login page
 if (!isset($_SESSION["whale_enterprises_loggedin"]) || $_SESSION["whale_enterprises_loggedin"] !== true) {
@@ -77,10 +77,10 @@ if ($sector_4 != '') {
                 <div class="line3"></div>
             </div>
             <ul class="nav-links">
-                <li><a href="index.php">Home</a></li>
+                <li><a href="index">Home</a></li>
                 <li><a href="#" style="color:#fff" class="active">Documents</a></li>
-                <li><a href="useraccess.php" class="">User Details</a></li>
-                <li><a href="profile.php" class="">Profile</a></li>
+                <li><a href="useraccess" class="">User Details</a></li>
+                <li><a href="profile" class="">Profile</a></li>
                 <li><a href="logout.php" class="join-button">Logout</a></li>
             </ul>
         </nav>
@@ -98,9 +98,9 @@ if ($sector_4 != '') {
                 <div class="line3"></div>
             </div>
             <ul class="nav-links">
-                <li><a href="index.php">Home</a></li>
+                <li><a href="index">Home</a></li>
                 <li><a href="#" style="color:#fff" class="active">Documents</a></li>
-                <li><a href="profile.php">Profile</a></li>
+                <li><a href="profile">Profile</a></li>
                 <li><a href="logout.php" class="join-button">Logout</a></li>
             </ul>
         </nav>
@@ -167,7 +167,7 @@ if ($sector_4 != '') {
                                         <?php echo $search_row['file']; ?>
                                     </td>
                                     <td style='display:flex; flex-direction:row;' data-th="">
-                                        <form action="file-view-only.php" method='POST' class="table-forms">
+                                        <form action="file-view-only" method='POST' class="table-forms">
                                             <input type="hidden" name="filename" value="<?php echo $search_row['file']; ?>" />
                                             <button type="submit" class="update_details" name="view-pdf">View</button>
                                         </form>
@@ -233,7 +233,7 @@ if ($sector_4 != '') {
                                         <?php echo $row['file']; ?>
                                     </td>
                                     <td style='display:flex; flex-direction:row;' data-th="">
-                                        <form action="file-view-only.php" method='POST' class="table-forms">
+                                        <form action="file-view-only" method='POST' class="table-forms">
                                             <input type="hidden" name="filename" value="<?php echo $row['file']; ?>" />
                                             <button type="submit" class="update_details button" data-modal="modalOne" name="view-pdf">View</button>
                                         </form>

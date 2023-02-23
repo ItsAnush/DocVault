@@ -1,14 +1,16 @@
 <?php
 // Initialize the session
 session_start();
+require 'front-controller.php';
+require_once "config.php";
+
 // Check if the user is already logged in, if yes then redirect him to welcome page
 if (isset($_SESSION["whale_enterprises_loggedin"]) && $_SESSION["whale_enterprises_loggedin"] === true) {
-    header("location: index.php");
+    header("location: index");
     exit;
 }
 error_reporting(0);
 // Include config file
-require_once "config.php";
 
 // Define variables and initialize with empty values
 $username = $password = "";
@@ -28,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (mysqli_num_rows($result) == 1) {
             $password_result = exec("python ./python/password_reset.py" . " $username");
 
-            $url = "verify-otp.php"; // replace with the URL of the API endpoint
+            $url = "verify-otp"; // replace with the URL of the API endpoint
             $data = array(
                 "username" => "$username"
             ); // replace with the parameters you want to send
@@ -44,12 +46,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // do something with the response
             echo $response;
             $_SESSION["forget-password-whale-username"] = $username;
-            header("Location: verify-otp.php?username=" . urlencode($data["username"]));
+            header("Location: verify-otp?username=" . urlencode($data["username"]));
         } else {
             // Username doesn't exist, display a generic error message
             $login_err = "Mail ID does not exists.";
             $_SESSION['login_err'] = $login_err;
-            header("Location: forget-password.php");
+            header("Location: forget-password");
         }
     }
 
@@ -138,7 +140,7 @@ mysqli_close($link);
                                     </div>
                                     <span class="invalid-feedback"><?php echo $username_err; ?></span>
                                     <div class="field padding-bottom--24">
-                                        <input style="background: blue;" href="create_account.php" type="submit" value="Send OTP">
+                                        <input style="background: blue;" type="submit" value="Send OTP">
                                     </div>
 
 

@@ -1,11 +1,12 @@
 <?php
 
 include 'config.php';
+require 'front-controller.php';
 
 session_start();
 // Check if the user is logged in, if not then redirect him to login page
 if (!isset($_SESSION["whale_enterprises_loggedin"]) || $_SESSION["whale_enterprises_loggedin"] !== true) {
-    header("location: login.php");
+    header("location: login");
     exit;
 }
 $username = $_SESSION["username"];
@@ -126,11 +127,11 @@ while ($sector_row = mysqli_fetch_assoc($sector_result)) {
                 <div class="line3"></div>
             </div>
             <ul class="nav-links">
-                <li><a href="index.php">Home</a></li>
-                <li><a href="view-only.php">Documents</a></li>
-                <li><a href="useraccess.php" style="color:#fff" class="active">User Details</a></li>
-                <li><a href="profile.php">Profile</a></li>
-                <li><a href="logout.php" class="join-button">Logout</a></li>
+                <li><a href="index">Home</a></li>
+                <li><a href="view-only">Documents</a></li>
+                <li><a href="useraccess" style="color:#fff" class="active">User Details</a></li>
+                <li><a href="profile">Profile</a></li>
+                <li><a href="logout" class="join-button">Logout</a></li>
             </ul>
         </nav>
     <?php }
@@ -147,11 +148,11 @@ while ($sector_row = mysqli_fetch_assoc($sector_result)) {
                 <div class="line3"></div>
             </div>
             <ul class="nav-links">
-                <li><a href="index.php">Home</a></li>
-                <li><a href="view-only.php">Documents</a></li>
-                <li><a href="useraccess.php" style="color:#fff" class="active">User Details</a></li>
-                <li><a href="profile.php" class="">Profile</a></li>
-                <li><a href="logout.php" class="join-button">Logout</a></li>
+                <li><a href="index">Home</a></li>
+                <li><a href="view-only">Documents</a></li>
+                <li><a href="useraccess" style="color:#fff" class="active">User Details</a></li>
+                <li><a href="profile" class="">Profile</a></li>
+                <li><a href="logout" class="join-button">Logout</a></li>
             </ul>
         </nav>
     <?php } ?>
@@ -168,7 +169,7 @@ while ($sector_row = mysqli_fetch_assoc($sector_result)) {
                 <div class="rightbox">
                     <div class="profile">
                         <h1>Update Details of <?php echo $row['name'] ?></h1>
-                        <form action="action.php" method="post" id="myForm">
+                        <form action="action" method="post" id="myForm">
                             <label>Full Name</label>
                             <input type="text" class="form-control" name="emp_name" placeholder="Enter Employee Name" value="<?php echo $row['name'] ?>" required><br />
                             <label>Phone Number</label>
