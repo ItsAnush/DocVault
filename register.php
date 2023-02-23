@@ -244,6 +244,14 @@ if (trim($row['designation']) == "Admin" or trim($row['designation']) == "SuperA
     <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
     <script src="./js/script.js"></script>
     <script src="./js/nav.js"></script>
+    <script src="./js/script.js"></script>
+    <script language="javascript">
+        var noPrint = true;
+        var noCopy = true;
+        var noScreenshot = true;
+        var autoBlur = false;
+    </script>
+    <script type="text/javascript" src="https://pdfanticopy.com/noprint.js"></script>
 
     </html>
 <?php } ?>

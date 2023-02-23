@@ -18,13 +18,25 @@ $row = mysqli_fetch_assoc($result);
 $admin = trim($row['designation']);
 
 $search_username = $row['username'];
-$sector_sql = "SELECT * FROM `sectors` WHERE username = '$username'";
-$sector_result = mysqli_query($link, $sector_sql);
-$multi_sector = array();
-while ($sector_row = mysqli_fetch_assoc($sector_result)) {
-    array_push($multi_sector, $sector_row['sector']);
+
+
+
+$sector_1 = $_POST['sector-1'];
+$sector_2 = $_POST['sector-2'];
+$sector_3 = $_POST['sector-3'];
+$sector_4 = $_POST['sector-4'];
+if ($sector_1 != '') {
+    $sector = $sector_1;
 }
-$length = count($multi_sector);
+if ($sector_2 != '') {
+    $sector = $sector_2;
+}
+if ($sector_3 != '') {
+    $sector = $sector_3;
+}
+if ($sector_4 != '') {
+    $sector = $sector_4;
+}
 
 
 ?>
@@ -114,6 +126,13 @@ $length = count($multi_sector);
                 </tr>
                 <?php
                 if (isset($_POST['filter'])) {
+                    $sector_sql = "SELECT * FROM `sectors` WHERE username = '$username'";
+                    $sector_result = mysqli_query($link, $sector_sql);
+                    $multi_sector = array();
+                    while ($sector_row = mysqli_fetch_assoc($sector_result)) {
+                        array_push($multi_sector, $sector_row['sector']);
+                    }
+                    $length = count($multi_sector);
                     $s_no = 1;
                     $value_filter = $_POST['filter-value'];
                     for ($i = 0; $i < $length; $i++) {
@@ -135,12 +154,11 @@ $length = count($multi_sector);
                                     <td data-th="Drawing Number">
                                         <?php echo $search_row['drawing_number']; ?>
                                     </td>
-                                    <td data-th="Revision Numebr">
+                                    <td data-th="Revision Number">
                                         <?php echo $search_row['revision_number']; ?>
                                     </td>
                                     <td data-th="Description">
                                         <?php echo $search_row['description']; ?>
-
                                     </td>
                                     <td data-th="Sector">
                                         <?php echo $search_row['sector']; ?>
@@ -171,6 +189,13 @@ $length = count($multi_sector);
                     }
                 }
                 if (isset($_POST['filter']) == false) {
+                    $sector_sql = "SELECT * FROM `sectors` WHERE username = '$username'";
+                    $sector_result = mysqli_query($link, $sector_sql);
+                    $multi_sector = array();
+                    while ($sector_row = mysqli_fetch_assoc($sector_result)) {
+                        array_push($multi_sector, $sector_row['sector']);
+                    }
+                    $length = count($multi_sector);
                     for ($i = 0; $i < $length; $i++) {
                         if ($sector == '') {
                             $sql = "SELECT * FROM software_model WHERE sector='$multi_sector[$i]' ORDER BY id DESC";
@@ -181,6 +206,7 @@ $length = count($multi_sector);
                             $sql = "SELECT * FROM software_model WHERE sector='$sector' ORDER BY id DESC";
                             $result = mysqli_query($link, $sql);
                             unset($multi_sector[$i]);
+                            $length = 1;
                         }
                         if (mysqli_num_rows($result) > 0) {
                             $s_no = 1;
@@ -233,5 +259,14 @@ $length = count($multi_sector);
     </section>
 </body>
 <script src="./js/nav.js"></script>
+<script src="./js/script.js"></script>
+<script language="javascript">
+    var noPrint = true;
+    var noCopy = true;
+    var noScreenshot = true;
+    var autoBlur = false;
+</script>
+<script type="text/javascript" src="https://pdfanticopy.com/noprint.js"></script>
+
 
 </html>

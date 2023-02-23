@@ -38,7 +38,89 @@ $admin = trim($row['designation']);
 
     .userlist {
         transform: scale(.95);
+    }
 
+    .add_user_button {
+        font-size: 14px;
+        background-color: #0c48db;
+        text-decoration: none;
+        color: #fff;
+        padding: 10px;
+        border-radius: 4px;
+        margin-left: 2vw;
+    }
+
+    @media screen and (max-width: 1075px) {
+        .userlist {
+            padding-top: 10vh;
+        }
+
+        .rwd-table {
+            margin: auto;
+            min-width: 300px;
+            max-width: 100%;
+            border-collapse: collapse;
+            box-shadow: 2px 5px 20px rgba(119, 119, 119, 0.5);
+            margin-bottom: 5vh;
+        }
+
+        .rwd-table tr:first-child {
+            border-top: none;
+            background: #0c48dbdb;
+            color: #fff;
+        }
+
+        .rwd-table tr {
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            background-color: #f5f9fc;
+        }
+
+        .rwd-table th {
+            display: none;
+            border: none;
+        }
+
+        .rwd-table td {
+            display: block;
+            border: none;
+        }
+
+        .rwd-table td:first-child {
+            margin-top: .5em;
+        }
+
+        .rwd-table td:last-child {
+            margin-bottom: .5em;
+        }
+
+        .rwd-table td:before {
+            content: attr(data-th) " ";
+            font-weight: 500;
+            width: 120px;
+            display: inline-block;
+            color: #000;
+        }
+
+        .rwd-table th,
+        .rwd-table td {
+            text-align: left;
+        }
+
+        .rwd-table {
+            color: #5a5a5a;
+            border-radius: .4em;
+            overflow: hidden;
+        }
+
+        .rwd-table tr {
+            border-color: #bfbfbf;
+        }
+
+        .rwd-table th,
+        .rwd-table td {
+            padding: .5em 1em;
+        }
     }
 </style>
 
@@ -208,5 +290,14 @@ $admin = trim($row['designation']);
     <?php } ?>
 </body>
 <script src="./js/nav.js"></script>
+
+<script src="./js/script.js"></script>
+<script language="javascript">
+    var noPrint = true;
+    var noCopy = true;
+    var noScreenshot = true;
+    var autoBlur = false;
+</script>
+<script type="text/javascript" src="https://pdfanticopy.com/noprint.js"></script>
 
 </html>

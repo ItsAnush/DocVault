@@ -246,5 +246,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="./js/nav.js"></script>
 
 </body>
+<script src="./js/script.js"></script>
+<script language="javascript">
+    var noPrint = true;
+    var noCopy = true;
+    var noScreenshot = true;
+    var autoBlur = false;
+</script>
+<script type="text/javascript" src="https://pdfanticopy.com/noprint.js"></script>
 
 </html>
