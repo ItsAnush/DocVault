@@ -69,11 +69,14 @@ $admin = trim($row['designation']);
             }
             ?>
             <h1>User Access Control</h1>
-            <div class="search-box">
+            <div class="search-box mobile-view">
                 <form class="search-box" action="" method="post">
                     <input class="search-bar" type="text" name="filter-value" placeholder="Search Here!" />
                     <button name="filter" class="search_details">Search</button>
                 </form>
+                <center style="margin-top: 1.7vh;">
+                    <a class="add_user_button" href="register.php">Add User</a>
+                </center>
             </div>
             <table class="rwd-table">
                 <tbody>

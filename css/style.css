@@ -498,6 +498,16 @@ textarea {
     letter-spacing: 1px;
 }
 
+.add_user_button {
+    font-size: 14px;
+    background-color: #0c48db;
+    text-decoration: none;
+    color: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    margin-left: 2vw
+}
+
 .updating-details {
     margin-top: 0px;
     padding-top: 20vh;

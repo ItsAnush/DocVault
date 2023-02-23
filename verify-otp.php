@@ -12,7 +12,7 @@ require_once "config.php";
 
 // Define variables and initialize with empty values
 $username = $password = "";
-$username_err = $password_err = $login_err = "";
+$username_err = $password_err = $otp_error = "";
 $username = $_GET['username'];
 
 // Processing form data when form is submitted
@@ -59,13 +59,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         } else {
             // Password is not valid, display a generic error message
-            $login_err = "Entered OTP is incorrect";
+            $otp_error = "Entered OTP is incorrect";
+            $_SESSION['otp_error'] = $otp_error;
+            header("Location: verify-otp.php");
         }
+    } else {
+        // Password is not valid, display a generic error message
+        $otp_error = "Entered OTP is incorrect";
+        $_SESSION['otp_error'] = $otp_error;
+        header("Location: verify-otp.php");
     }
 }
-
-
-
 
 ?>
 <!DOCTYPE html>
@@ -133,11 +137,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                 $username = $_GET['username'];
                                 ?>
                                 <form id="stripe-login" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-
+                                    <?php if (!empty($_SESSION['otp_error'])) {
+                                        echo '<center><div style="color:red" class="alert alert-danger">' . $_SESSION['otp_error'] . '</div></center>';
+                                    } ?>
                                     <div class="field padding-bottom--24">
                                         <label for="password">One Time Password</label>
                                         <input autocomplete="off" type="password" name="password" placeholder="Enter your OTP" minlength="6" class="form-control <?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>">
-                                        <span class="invalid-feedback"><?php echo $login_err; ?></span>
+                                        <span class="invalid-feedback"><?php echo $otp_error; ?></span>
                                     </div>
 
                                     <div class="field padding-bottom--24">

@@ -24,11 +24,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $username = trim($_POST["username"]);
         // Prepare a select statement
         $sql = "SELECT username FROM `users` WHERE username = '$username'";
-        echo $sql;
         $result = mysqli_query($link, $sql);
         if (mysqli_num_rows($result) == 1) {
             $password_result = exec("python ./python/password_reset.py" . " $username");
-            echo $password_result;
 
             $url = "verify-otp.php"; // replace with the URL of the API endpoint
             $data = array(
@@ -50,11 +48,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             // Username doesn't exist, display a generic error message
             $login_err = "Mail ID does not exists.";
+            $_SESSION['login_err'] = $login_err;
+            header("Location: forget-password.php");
         }
     }
 
     // Close statement
     mysqli_stmt_close($stmt);
+} else {
+    echo "Oops! Something went wrong. Please try again later.";
 }
 
 
@@ -126,13 +128,13 @@ mysqli_close($link);
 
                                 <form id="stripe-login" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                                     <?php
-                                    if (!empty($login_err)) {
-                                        echo '<center><div style="color:red" class="alert alert-danger">' . $login_err . '</div></center>';
+                                    if (!empty($_SESSION['login_err'])) {
+                                        echo '<center><div style="color:red" class="alert alert-danger">' . $_SESSION['login_err'] . '</div></center>';
                                     }
                                     ?>
                                     <div class="field padding-bottom--24">
                                         <label for="username">Mail ID</label>
-                                        <input autocomplete="off" type="text" name="username" placeholder="Enter Mail ID" class="form-control  <?php echo (!empty($username_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $username; ?>">
+                                        <input autocomplete="off" type="email" name="username" placeholder="Enter Mail ID" required class="form-control  <?php echo (!empty($username_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $username; ?>">
                                     </div>
                                     <span class="invalid-feedback"><?php echo $username_err; ?></span>
                                     <div class="field padding-bottom--24">

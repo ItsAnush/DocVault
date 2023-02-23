@@ -149,7 +149,7 @@ $sector_filter = $_POST['sector'];
         var noPrint = true;
         var noCopy = true;
         var noScreenshot = true;
-        var autoBlur = true;
+        var autoBlur = false;
     </script>
     <script>
         document.onkeydown = function(e) {
@@ -207,6 +207,20 @@ $sector_filter = $_POST['sector'];
             } catch (err) {}
         }
         setInterval("AccessClipboardData()", 300);
+    </script>
+    <script>
+        // Get a reference to the element with the ID "element"
+        const element = document.getElementById('element');
+
+        // Add an event listener to the element to detect when the mouse leaves the element
+        element.addEventListener('mouseleave', () => {
+            // Blur the element's content
+            element.style.filter = 'blur(30px)';
+        });
+        document.body.addEventListener('click', () => {
+            // Remove the blur effect from the element's content
+            element.style.filter = 'none';
+        });
     </script>
     <script src="./js/nav.js"></script>
     <script type="text/javascript" src="https://pdfanticopy.com/noprint.js"></script>

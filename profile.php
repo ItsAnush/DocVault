@@ -1,5 +1,4 @@
 <?php
-
 include 'config.php';
 
 session_start();
@@ -155,7 +154,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <?php } ?>
     <!-- partial:index.partial.html -->
     <section class="over-all-box">
-        <div class="container">
+        <div style="height:440px;" class="container">
             <div id="logoo">
                 <h1 class="logoo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h1>
             </div>
@@ -192,9 +191,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <p><?php echo $row['phone_number'] ?></p>
                             <h2>Designation</h2>
                             <p><?php echo $row['designation'] ?></p>
-                            <?php if ($row['sector'] == null) {
+                            <?php
+                            $check_sector_sql = "SELECT * FROM `sectors` WHERE username = '$usernamee'";
+                            $check_sector_result = mysqli_query($link, $check_sector_sql);
+                            if (mysqli_num_rows($check_sector_result) < 1) {
                                 echo "<p style='text-align:center; color:red; border-image:none;border:none;'>Contact Admin to allocate sector</p>";
-                            } ?>
+                            }
+                            ?>
                         </div>
                 <?php
                 }
