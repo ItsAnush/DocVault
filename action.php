@@ -42,15 +42,53 @@ if (isset($_POST['submit'])) {
         #upload directory path
         $uploads_dir = 'uploads';
         #TO move the uploaded file to specific location
-        move_uploaded_file($tname, $uploads_dir . '/' . $pname);
         #sql query to insert into database
-        $sql = "INSERT INTO software_model(drawing_number, revision_number, description, file, sector) VALUES ('$d_no', '$r_no', '$desc', '$pname', '$sector')";
-        if (mysqli_query($link, $sql)) {
-            setcookie("status", "Successfully Uploaded!", time() + (7), "/");
-            echo "<center><p style='color:green';>Successfully Uploaded!</p></center>";
+        $check_file_sql = "SELECT * FROM `software_model` WHERE drawing_number = '$d_no' and revision_number = '$r_no'";
+        $check_file_result = mysqli_query($link, $check_file_sql);
+        if (mysqli_num_rows($check_file_result) > 0) {
+            $check_file_row = mysqli_fetch_assoc($check_file_result);
+            $file_path_name = $check_file_row['file'];
+            echo $file_path_name;
+            $file_path = $uploads_dir . '/' . $file_path_name; // Replace with the actual file path
+            echo $file_path;
+            if (file_exists($file_path)) {
+                if (unlink($file_path)) {
+                    echo "File deleted successfully.";
+                } else {
+                    echo "Unable to delete the file.";
+                }
+            } else {
+                echo "File not found.";
+            }
+            move_uploaded_file($tname, $uploads_dir . '/' . $pname);
+            echo "<br/>";
+            $sql = "UPDATE `whale_enterprises`.`software_model` SET sector = '$sector' WHERE drawing_number = '$d_no' and revision_number = '$r_no'";
+            echo $sql;
+            $result = mysqli_query($link, $sql);
+            echo "<br/>";
+            $sql = "UPDATE `whale_enterprises`.`software_model` SET `file` = '$pname' WHERE drawing_number = '$d_no' and revision_number = '$r_no'";
+            echo $sql;
+            echo "<br/>";
+            $result = mysqli_query($link, $sql);
+            $sql = "UPDATE `whale_enterprises`.`software_model` SET `description` = '$desc' WHERE drawing_number = '$d_no' and revision_number = '$r_no'";
+            echo $sql;
+            if (mysqli_query($link, $sql)) {
+                setcookie("status", "Successfully Updated!", time() + (7), "/");
+                echo "<center><p style='color:green';>Successfully Updated!</p></center>";
+            } else {
+                setcookie("status", "Update Failed!", time() + (7), "/");
+                echo "<center><p style='color:red';>Update Failed!</p></center>";
+            }
         } else {
-            setcookie("status", "Upload Failed!", time() + (7), "/");
-            echo "<center><p style='color:red';>Upload Failed!</p></center>";
+            $sql = "INSERT INTO software_model(drawing_number, revision_number, 'description', `file`, sector) VALUES ('$d_no', '$r_no', '$desc', '$pname', '$sector')";
+            echo $sql;
+            if (mysqli_query($link, $sql)) {
+                setcookie("status", "Successfully Uploaded!", time() + (7), "/");
+                echo "<center><p style='color:green';>Successfully Uploaded!</p></center>";
+            } else {
+                setcookie("status", "Upload Failed!", time() + (7), "/");
+                echo "<center><p style='color:red';>Upload Failed!</p></center>";
+            }
         }
     } else {
         echo "file is not valid type";

@@ -170,7 +170,7 @@ while ($sector_row = mysqli_fetch_assoc($sector_result)) {
                         <h1>Update Details of <?php echo $row['name'] ?></h1>
                         <form action="action.php" method="post" id="myForm">
                             <label>Full Name</label>
-                            <input type="text" class="form-control" name="emp_name" placeholder="Enter Employeex` Name" value="<?php echo $row['name'] ?>" required><br />
+                            <input type="text" class="form-control" name="emp_name" placeholder="Enter Employee Name" value="<?php echo $row['name'] ?>" required><br />
                             <label>Phone Number</label>
                             <input type="text" class="form-control" name="emp_number" placeholder="Enter Phone Number" value="<?php echo $row['phone_number'] ?>" required><br />
                             <label>Sector</label>

@@ -114,44 +114,58 @@ $personal_number = $row['phone_number'];
     <section id="home" class="section">
         <h3 class="admin-sectors-title">Sectors for You</h3>
         <div class="overall">
-            <form action="view-only.php" method="POST">
-                <input type="hidden" name="sector-1" value="Parts">
-                <button name="parts-btn">
-                    <div class="main blue-border">
-                        <div id="parts" class="out_body"></div>
-                        <p>Parts</p>
-                    </div>
-                </button>
-            </form>
-            <form action="view-only.php" method="POST">
-                <input type="hidden" name="sector-2" value="Fabrication">
-                <button name="tankers-btn">
-                    <div class="main green-border">
-                        <div id="tankers" class="out_body"></div>
-                        <p>Fabrication</p>
-                    </div>
-                </button>
-            </form>
-
-            <form action="view-only.php" method="POST">
-                <input type="hidden" name="sector-3" value="New Product Development">
-                <button name="npd-btn">
-                    <div class="main violet-border">
-                        <div id="npd" class="out_body"></div>
-                        <p>New Product Development</p>
-                    </div>
-                </button>
-            </form>
-
-            <form action="view-only.php" method="POST">
-                <input type="hidden" name="sector-4" value="Machine Shop">
-                <button name="machine-btn">
-                    <div class="main light-blue-border">
-                        <div id="machine" class="out_body"></div>
-                        <p>Machine Shop</p>
-                    </div>
-                </button>
-            </form>
+            <?php
+            $display_sector_sql = "SELECT * FROM sectors WHERE username = '$username'";
+            $display_sector_result = mysqli_query($link, $display_sector_sql);
+            while ($display_sector_row = mysqli_fetch_assoc($display_sector_result)) {
+                if (trim($display_sector_row['sector']) == "Parts") {
+            ?>
+                    <form action="view-only.php" method="POST">
+                        <input type="hidden" name="sector-1" value="Parts">
+                        <button name="parts-btn">
+                            <div class="main blue-border">
+                                <div id="parts" class="out_body"></div>
+                                <p>Parts</p>
+                            </div>
+                        </button>
+                    </form>
+                <?php }
+                if (trim($display_sector_row['sector']) == "Fabrication") { ?>
+                    <form action="view-only.php" method="POST">
+                        <input type="hidden" name="sector-2" value="Fabrication">
+                        <button name="tankers-btn">
+                            <div class="main green-border">
+                                <div id="tankers" class="out_body"></div>
+                                <p>Fabrication</p>
+                            </div>
+                        </button>
+                    </form>
+                <?php }
+                if (trim($display_sector_row['sector']) == "New Product Development") { ?>
+                    <form action="view-only.php" method="POST">
+                        <input type="hidden" name="sector-3" value="New Product Development">
+                        <button name="npd-btn">
+                            <div class="main violet-border">
+                                <div id="npd" class="out_body"></div>
+                                <p>New Product Development</p>
+                            </div>
+                        </button>
+                    </form>
+                <?php }
+                if (trim($display_sector_row['sector']) == "Machine Shop") { ?>
+                    <form action="view-only.php" method="POST">
+                        <input type="hidden" name="sector-4" value="Machine Shop">
+                        <button name="machine-btn">
+                            <div class="main light-blue-border">
+                                <div id="machine" class="out_body"></div>
+                                <p>Machine Shop</p>
+                            </div>
+                        </button>
+                    </form>
+            <?php
+                }
+            }
+            ?>
         </div>
         <?php
         if (trim($admin) != 'User') { ?>
