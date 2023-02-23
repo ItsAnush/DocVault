@@ -10,7 +10,7 @@ if (!isset($_SESSION["whale_enterprises_loggedin"]) || $_SESSION["whale_enterpri
 $username = $_SESSION["username"];
 
 error_reporting(0); // For not showing any error
-$sql = "SELECT * FROM student_details Where email IN ('$username')";
+$sql = "SELECT * FROM student_details WHERE email IN ('$username')";
 
 function myfunction($a, $b)
 {
@@ -31,7 +31,7 @@ if (isset($_POST['submit'])) {
     $sector  = $_POST['sector'];
 
     if (is_uploaded_file($_FILES["file"]["tmp_name"]) && ($_FILES["file"]["type"] == 'application/pdf')) {
-        echo "file is valid";
+        #echo "file is valid";
         #retrieve file title
         $title = $_POST["title"];
         #file name with a random number so that similar dont get replaced
@@ -43,72 +43,72 @@ if (isset($_POST['submit'])) {
         #TO move the uploaded file to specific location
         #sql query to insert into database
         $check_file_sql = "SELECT * FROM `software_model` WHERE drawing_number = '$d_no' and revision_number = '$r_no'";
-        echo $check_file_sql;
-        echo "<br/>";
+        #echo $check_file_sql;
+        #echo "<br/>";
         $check_file_result = mysqli_query($link, $check_file_sql);
         if (mysqli_num_rows($check_file_result) > 0) {
             $check_file_row = mysqli_fetch_assoc($check_file_result);
             $file_path_name = $check_file_row['file'];
-            echo $file_path_name;
+            #echo $file_path_name;
             $file_path = $uploads_dir . '/' . $file_path_name; // Replace with the actual file path
-            echo $file_path;
+            #echo $file_path;
             if (file_exists($file_path)) {
                 if (unlink($file_path)) {
-                    echo "File deleted successfully.";
+                    #echo "File deleted successfully.";
                 } else {
-                    echo "Unable to delete the file.";
+                    #echo "Unable to delete the file.";
                 }
             } else {
-                echo "File not found.";
+                #echo "File not found.";
             }
             move_uploaded_file($tname, $uploads_dir . '/' . $pname);
-            echo "<br/>";
+            #echo "<br/>";
             $sql = "UPDATE `whale_enterprises`.`software_model` SET sector = '$sector' WHERE drawing_number = '$d_no' and revision_number = '$r_no'";
-            echo $sql;
+            #echo $sql;
             $result = mysqli_query($link, $sql);
-            echo "<br/>";
+            #echo "<br/>";
             $sql = "UPDATE `whale_enterprises`.`software_model` SET `file` = '$pname' WHERE drawing_number = '$d_no' and revision_number = '$r_no'";
-            echo $sql;
-            echo "<br/>";
+            #echo $sql;
+            #echo "<br/>";
             $result = mysqli_query($link, $sql);
             $sql = "UPDATE `whale_enterprises`.`software_model` SET `description` = '$desc' WHERE drawing_number = '$d_no' and revision_number = '$r_no'";
-            echo $sql;
+            #echo $sql;
             if (mysqli_query($link, $sql)) {
                 setcookie("status", "Successfully Updated!", time() + (7), "/");
-                echo "<center><p style='color:green';>Successfully Updated!</p></center>";
+                #echo "<center><p style='color:green';>Successfully Updated!</p></center>";
             } else {
                 setcookie("status", "Update Failed!", time() + (7), "/");
-                echo "<center><p style='color:red';>Update Failed!</p></center>";
+                #echo "<center><p style='color:red';>Update Failed!</p></center>";
             }
         } else {
             $check_file_sql = "SELECT * FROM `whale_enterprises`.`software_model`";
-            echo $check_file_sql;
-            echo "<br/>";
+            #echo $check_file_sql;
+            #echo "<br/>";
             $check_file_result = mysqli_query($link, $check_file_sql);
             $temp = 0;
             while ($check_file_row = mysqli_fetch_assoc($check_file_result)) {
-                echo $check_file_row['file'];
-                echo $pname;
+                #echo $check_file_row['file'];
+                #echo $pname;
                 if (strval($check_file_row['file']) == strval($pname)) {
-                    echo $pname;
+                    #echo $pname;
                     $temp = 1;
                 }
             }
             if ($temp == 1) {
                 setcookie("status", "Update Failed! There is already a file with same name.", time() + (7), "/");
-                echo "<center><p style='color:red';>Update Failed! There is already a file with same name.</p></center>";
+                #echo "<center><p style='color:red';>Update Failed! There is already a file with same name.</p></center>";
             } else {
                 $sql = "INSERT INTO `whale_enterprises`.`software_model`(drawing_number, revision_number, `description`, `file`, sector) VALUES ('$d_no', '$r_no', '$desc', '$pname', '$sector')";
                 move_uploaded_file($tname, $uploads_dir . '/' . $pname);
             }
-            echo $sql;
+            #echo $sql;
             if (mysqli_query($link, $sql)) {
                 setcookie("status", "Successfully Uploaded!", time() + (7), "/");
-                echo "<center><p style='color:green';>Successfully Uploaded!</p></center>";
+                #echo "<center><p style='color:green';>Successfully Uploaded!</p></center>";
             }
         }
     } else {
-        echo "file is not valid type";
+        #echo "file is not valid type";
     }
     header('Location: index.php');
 }
@@ -118,10 +118,10 @@ if (isset($_POST['delete-user'])) {
     $sql = "DELETE FROM users WHERE username = '$emp_username'";
     if (mysqli_query($link, $sql)) {
         setcookie("status", "Successfully Deleted the Details of user : $emp_username", time() + (7), "/");
-        echo "<center><p style='color:green';>Successfully Deleted the Details of user : $emp_username</p></center>";
+        #echo "<center><p style='color:green';>Successfully Deleted the Details of user : $emp_username</p></center>";
     } else {
         setcookie("status", "Deletion Failed for the user : $emp_username.", time() + (7), "/");
-        echo "<center><p style='color:red';>Deletion Failed for the user : $emp_username.</p></center>";
+        #echo "<center><p style='color:red';>Deletion Failed for the user : $emp_username.</p></center>";
     }
     header('Location: useraccess.php');
 }
@@ -141,7 +141,7 @@ if (isset($_POST['update-details'])) {
     }
 
     $sector_sql = "DELETE FROM `sectors` WHERE username = '$emp_username'";
-    echo $sector_sql;
+    #echo $sector_sql;
     $sector_result = mysqli_query($link, $sector_sql);
     for ($i = 0; $i < $length; $i++) {
         $sql = "INSERT INTO `sectors` (username, sector) VALUES ('$emp_username', '$selectedOptions[$i]')";
@@ -153,13 +153,13 @@ if (isset($_POST['update-details'])) {
     } else {
         $update_sql = "UPDATE `whale_enterprises`.`users` SET name = '$emp_name', phone_number = '$emp_number' where username = '$emp_username'";
     }
-    echo $update_sql;
+    #echo $update_sql;
     if (mysqli_query($link, $update_sql)) {
         setcookie("status", "Successfully Updated the Details of user : $emp_username", time() + (7), "/");
-        echo "<center><p style='color:green';>Successfully Updated the Details of user : $emp_username</p></center>";
+        #echo "<center><p style='color:green';>Successfully Updated the Details of user : $emp_username</p></center>";
     } else {
         setcookie("status", "Update Failed for the user : $emp_username.", time() + (7), "/");
-        echo "<center><p style='color:red';>Update Failed for the user : $emp_username.</p></center>";
+        #echo "<center><p style='color:red';>Update Failed for the user : $emp_username.</p></center>";
     }
     header('Location: useraccess.php');
 }
@@ -167,36 +167,36 @@ if (isset($_POST['profile-update-details'])) {
     $name = $_POST['name'];
     $phone_number = $_POST['phone_number'];
     $sql = "UPDATE `whale_enterprises`.`users` SET name = '$name', phone_number = '$phone_number' where username = '$username'";
-    echo $sql;
+    #echo $sql;
     if (mysqli_query($link, $sql)) {
         setcookie("profile_status", "Successfully Updated the Details of user : $emp_username", time() + (7), "/");
-        echo "<center><p style='color:green';>Successfully Updated the Details.</p></center>";
+        #echo "<center><p style='color:green';>Successfully Updated the Details.</p></center>";
     } else {
         setcookie("profile_status", "Update Failed for the user : $emp_username.", time() + (7), "/");
-        echo "<center><p style='color:red';>Update Failed.</p></center>";
+        #echo "<center><p style='color:red';>Update Failed.</p></center>";
     }
     header('Location: profile.php');
 }
 if (isset($_POST['delete-pdf-btn'])) {
     $file_name = $_POST['delete-pdf'];
-    echo $filename;
+    #echo $filename;
     $path = "./uploads/";
     $file = $path . $file_name;
-    echo $file;
+    #echo $file;
     $status = unlink($file);
     if ($status) {
-        echo "File deleted successfully";
+        #echo "File deleted successfully";
         $sql = "DELETE from software_model WHERE file = '$file_name'";
-        echo $sql;
+        #echo $sql;
         if (mysqli_query($link, $sql)) {
             setcookie("delete_status", "Successfully removed the file : $file_name", time() + (7), "/");
-            echo "<center><p style='color:green';>Successfully Removed the File.</p></center>";
+            #echo "<center><p style='color:green';>Successfully Removed the File.</p></center>";
         } else {
             setcookie("delete_status", "Failed to remove the file : $file_name.", time() + (7), "/");
-            echo "<center><p style='color:red';>Failed to remove the file</p></center>";
+            #echo "<center><p style='color:red';>Failed to remove the file</p></center>";
         }
     } else {
-        echo "Sorry!";
+        #echo "Sorry!";
     }
 
     header('Location: view-only.php');

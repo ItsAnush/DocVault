@@ -97,7 +97,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Whale Enterprise | Login</title>
     <link rel="stylesheet" href="./css/login-style.css">
     <link rel="icon" type="image/x-icon" href="./assets/logo.png">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 
 </head>
 

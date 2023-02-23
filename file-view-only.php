@@ -215,11 +215,66 @@ $sector_filter = $_POST['sector'];
         // Add an event listener to the element to detect when the mouse leaves the element
         element.addEventListener('mouseleave', () => {
             // Blur the element's content
-            element.style.filter = 'blur(30px)';
+            element.style.filter = 'blur(12px)';
         });
         document.body.addEventListener('click', () => {
             // Remove the blur effect from the element's content
             element.style.filter = 'none';
+        });
+        // Get the element where you want to disable long press
+
+        // Set the minimum duration of the key press in milliseconds
+        var longPressDuration = 1000;
+
+        // Create a variable to store the start time of the key press
+        var pressStartTime;
+
+        // Add a keydown event listener to the element
+        element.addEventListener("keydown", function(event) {
+            // Get the current time
+            var currentTime = new Date().getTime();
+
+            // If this is the first keydown event or the key has been released and pressed again
+            if (!pressStartTime || (currentTime - pressStartTime) > longPressDuration) {
+                // Set the press start time to the current time
+                pressStartTime = currentTime;
+            }
+            // If the key has been held down for more than the long press duration
+            else if ((currentTime - pressStartTime) > longPressDuration) {
+                // Prevent the default behavior of the event
+                event.preventDefault();
+            }
+        });
+        // Add a keydown event listener to the document
+        document.addEventListener('keydown', function(event) {
+            // Check if the pressed key is the print screen key (keyCode 44)
+            if (event.keyCode === 44) {
+                // Prevent the default behavior of the key
+                event.preventDefault();
+                // Add a keyup event listener to the document
+                document.addEventListener('keyup', function(event) {
+                    // Check if the released key is the print screen key (keyCode 44)
+                    if (event.keyCode === 44) {
+                        // Remove the keyup event listener
+                        document.removeEventListener('keyup', arguments.callee);
+                    }
+                });
+            }
+        });
+        var timeoutId;
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                timeoutId = setTimeout(function() {
+                    element.style.filter = 'blur(12px)';
+                }, 1000); // Set a timeout of 1 second (1000 milliseconds)
+            }
+        });
+
+        document.addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                clearTimeout(timeoutId);
+            }
         });
     </script>
     <script src="./js/nav.js"></script>
