@@ -118,8 +118,7 @@ $personal_number = $row['phone_number'];
             $display_sector_sql = "SELECT * FROM sectors WHERE username = '$username'";
             $display_sector_result = mysqli_query($link, $display_sector_sql);
             while ($display_sector_row = mysqli_fetch_assoc($display_sector_result)) {
-                if (trim($display_sector_row['sector']) == "Parts") {
-            ?>
+                if (trim($display_sector_row['sector']) == "Parts") { ?>
                     <form action="view-only.php" method="POST">
                         <input type="hidden" name="sector-1" value="Parts">
                         <button name="parts-btn">

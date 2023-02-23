@@ -613,7 +613,13 @@ textarea {
     }
 }
 
-@media screen and (min-width: 600px) {
+@media screen and (max-width: 1075px) {
+    .userlist {
+        padding-top: 10vh;
+    }
+}
+
+@media screen and (min-width: 920px) {
     .rwd-table tr:hover:not(:first-child) {
         background-color: #f5f9fc;
     }
@@ -812,6 +818,11 @@ a {
     }
     .userlist {
         padding-top: 10vh;
+    }
+    .mobile-view {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 5vh;
     }
 }
 

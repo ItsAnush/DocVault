@@ -54,7 +54,6 @@ $length = count($multi_sector);
 
 <body>
     <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
-
         <nav>
             <div class="logo">
                 <img class="logo-c" src=".\assets\logo.png">

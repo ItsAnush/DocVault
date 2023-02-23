@@ -25,7 +25,6 @@ if (isset($_POST['submit'])) {
     $pname = $_FILES["file"]['name'];
     $tname = $_FILES["files"]["tmp_name"];
     $upload_dir = './uploads';
-    move_uploaded_file($tname, $upload_dir . '/' . $pname);
     $d_no  = $_POST['d_no'];
     $r_no  = $_POST['r_no'];
     $desc  = $_POST['desc'];
@@ -44,6 +43,8 @@ if (isset($_POST['submit'])) {
         #TO move the uploaded file to specific location
         #sql query to insert into database
         $check_file_sql = "SELECT * FROM `software_model` WHERE drawing_number = '$d_no' and revision_number = '$r_no'";
+        echo $check_file_sql;
+        echo "<br/>";
         $check_file_result = mysqli_query($link, $check_file_sql);
         if (mysqli_num_rows($check_file_result) > 0) {
             $check_file_row = mysqli_fetch_assoc($check_file_result);
@@ -80,14 +81,30 @@ if (isset($_POST['submit'])) {
                 echo "<center><p style='color:red';>Update Failed!</p></center>";
             }
         } else {
-            $sql = "INSERT INTO software_model(drawing_number, revision_number, 'description', `file`, sector) VALUES ('$d_no', '$r_no', '$desc', '$pname', '$sector')";
+            $check_file_sql = "SELECT * FROM `whale_enterprises`.`software_model`";
+            echo $check_file_sql;
+            echo "<br/>";
+            $check_file_result = mysqli_query($link, $check_file_sql);
+            $temp = 0;
+            while ($check_file_row = mysqli_fetch_assoc($check_file_result)) {
+                echo $check_file_row['file'];
+                echo $pname;
+                if (strval($check_file_row['file']) == strval($pname)) {
+                    echo $pname;
+                    $temp = 1;
+                }
+            }
+            if ($temp == 1) {
+                setcookie("status", "Update Failed! There is already a file with same name.", time() + (7), "/");
+                echo "<center><p style='color:red';>Update Failed! There is already a file with same name.</p></center>";
+            } else {
+                $sql = "INSERT INTO `whale_enterprises`.`software_model`(drawing_number, revision_number, `description`, `file`, sector) VALUES ('$d_no', '$r_no', '$desc', '$pname', '$sector')";
+                move_uploaded_file($tname, $uploads_dir . '/' . $pname);
+            }
             echo $sql;
             if (mysqli_query($link, $sql)) {
                 setcookie("status", "Successfully Uploaded!", time() + (7), "/");
                 echo "<center><p style='color:green';>Successfully Uploaded!</p></center>";
-            } else {
-                setcookie("status", "Upload Failed!", time() + (7), "/");
-                echo "<center><p style='color:red';>Upload Failed!</p></center>";
             }
         }
     } else {
