@@ -1,12 +1,10 @@
 <?php
 // Include config file
 require_once "config.php";
-require 'front-controller.php';
-
 session_start();
 // Check if the user is logged in, if not then redirect him to login page
 if (!isset($_SESSION["whale_enterprises_loggedin"]) || $_SESSION["whale_enterprises_loggedin"] !== true) {
-    header("location: login");
+    header("location: login.php");
     exit;
 }
 $usernamee = $_SESSION["username"];
@@ -79,7 +77,7 @@ if (trim($row['designation']) == "Admin" or trim($row['designation']) == "SuperA
 
                                     // Store data in session variables
                                     $_SESSION["Success"] = "You have successfully Registered!";
-                                    header("location: login");
+                                    header("location: login.php");
                                 } else {
                                     echo "Oops! Something went wrong. Please try again later.";
                                 }
@@ -189,11 +187,11 @@ if (trim($row['designation']) == "Admin" or trim($row['designation']) == "SuperA
                                     <div class="line3"></div>
                                 </div>
                                 <ul class="nav-links">
-                                    <li><a href="index">Home</a></li>
-                                    <li><a href="view-only">Documents</a></li>
-                                    <li><a href="useraccess" style="color:#fff" class="active">User Details</a></li>
-                                    <li><a href="profile">Profile</a></li>
-                                    <li><a href="logout" class="join-button">Logout</a></li>
+                                    <li><a href="index.php">Home</a></li>
+                                    <li><a href="view-only.php">Documents</a></li>
+                                    <li><a href="useraccess.php" style="color:#fff" class="active">User Details</a></li>
+                                    <li><a href="profile.php">Profile</a></li>
+                                    <li><a href="logout.php" class="join-button">Logout</a></li>
                                 </ul>
                             </nav>
                         <?php } ?>
@@ -232,7 +230,7 @@ if (trim($row['designation']) == "Admin" or trim($row['designation']) == "SuperA
                                 </div>
                             </div>
                             <div class="footer-link padding-top--24">
-                                <span>Go back to User Access, <a href="useraccess" style="color: blue; cursor: pointer;"> Click here!</a></span>
+                                <span>Go back to User Access, <a href="useraccess.php" style="color: blue; cursor: pointer;"> Click here!</a></span>
 
                             </div>
                         </div>

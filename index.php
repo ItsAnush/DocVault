@@ -1,12 +1,11 @@
 <?php
 
 include 'config.php';
-require 'front-controller.php';
 
 session_start();
 // Check if the user is logged in, if not then redirect him to login page
 if (!isset($_SESSION["whale_enterprises_loggedin"]) || $_SESSION["whale_enterprises_loggedin"] !== true) {
-    header("location: login");
+    header("location: login.php");
     exit;
 }
 $username = $_SESSION["username"];
@@ -32,6 +31,7 @@ $personal_number = $row['phone_number'];
     <link rel="stylesheet" href="./css/profile.css">
     <link rel="icon" type="image/x-icon" href="./assets/logo.png">
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css'>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
 </head>
 <style>
     .container {
@@ -48,6 +48,11 @@ $personal_number = $row['phone_number'];
         color: #171717;
         padding-top: 38vh;
         overflow-x: hidden;
+    }
+
+    .form-input input {
+        font-size: 13px;
+        font-family: "Roboto", sans-serif !important;
     }
 
     .form-group label {
@@ -68,6 +73,70 @@ $personal_number = $row['phone_number'];
         }
 
     }
+
+    .select-dropdown {
+        position: relative;
+        height: 30px;
+        width: 98%;
+        border: 1px solid;
+        border-image: linear-gradient(to right, #0c48db, #ffffff) 0 0 1 0%;
+        background-color: #fff;
+        font-size: 13px;
+        font-family: "Poppins", sans-serif;
+        margin-top: 0;
+        padding-top: 10px;
+    }
+
+    .select-dropdown__header {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 5px;
+        cursor: pointer;
+        top: -8px;
+
+    }
+
+    .select-dropdown__title {
+        color: #747474;
+        font-size: 13px;
+        font-family: "Roboto", sans-serif !important;
+    }
+
+
+    .select-dropdown__toggle {
+        width: 0;
+        height: 0;
+        border-style: solid;
+        border-width: 5px 4px 0 4px;
+        border-color: #333 transparent transparent transparent;
+    }
+
+    .select-dropdown__options {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 100;
+        width: 100% !important;
+        max-height: 200px !important;
+        overflow-y: scroll !important;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        border-top: none;
+        display: none;
+    }
+
+    .select-dropdown__options label {
+        display: block;
+        padding: 5px 10px;
+    }
+
+    .select-dropdown__options input[type="checkbox"] {
+        display: block;
+        position: absolute;
+        left: -47%;
+    }
 </style>
 
 <body>
@@ -85,10 +154,10 @@ $personal_number = $row['phone_number'];
             </div>
             <ul class="nav-links">
                 <li><a href="#home" style="color:#fff" class="active">Home</a></li>
-                <li><a href="view-only">Documents</a></li>
-                <li><a href="useraccess">User Details</a></li>
-                <li><a href="profile">Profile</a></li>
-                <li><a href="logout" class="join-button">Logout</a></li>
+                <li><a href="view-only.php">Documents</a></li>
+                <li><a href="useraccess.php">User Details</a></li>
+                <li><a href="profile.php">Profile</a></li>
+                <li><a href="logout.php" class="join-button">Logout</a></li>
             </ul>
         </nav>
     <?php }
@@ -106,9 +175,9 @@ $personal_number = $row['phone_number'];
             </div>
             <ul class="nav-links">
                 <li><a href="#home" style="color:#fff" class="active">Home</a></li>
-                <li><a href="view-only">Documents</a></li>
-                <li><a href="profile">Profile</a></li>
-                <li><a href="logout" class="join-button">Logout</a></li>
+                <li><a href="view-only.php">Documents</a></li>
+                <li><a href="profile.php">Profile</a></li>
+                <li><a href="logout.php" class="join-button">Logout</a></li>
             </ul>
         </nav>
     <?php } ?>
@@ -178,7 +247,7 @@ $personal_number = $row['phone_number'];
             <div class="modal-content">
                 <div class="contact-form">
                     <a class="close">&times;</a>
-                    <form action="action.php" method="post" enctype="multipart/form-data">
+                    <form action="action.php" method="post" id="myForm" enctype="multipart/form-data">
                         <h1>Upload Documents</h1>
                         <div class="form-input py-2">
                             <div class="form-group">
@@ -194,10 +263,12 @@ $personal_number = $row['phone_number'];
                                 <input type="text" class="form-control" name="desc" placeholder="Description" required>
                             </div>
                             <br />
-
-                            <div class="form-group">
-                                <select class="form-control" name="sector" id="sector" required>
-                                    <option value="Not Selected">-- SELECT --</option>
+                            <div class="select-dropdown">
+                                <div class="select-dropdown__header">
+                                    <div class="select-dropdown__title">Select Sector</div>
+                                    <div class="select-dropdown__toggle"></div>
+                                </div>
+                                <div class="select-dropdown__options" selectedOptions[]>
                                     <?php
                                     $sector_sql = "SELECT * FROM `sectors` WHERE username = '$username'";
                                     $sector_result = mysqli_query($link, $sector_sql);
@@ -208,14 +279,16 @@ $personal_number = $row['phone_number'];
                                     $length = count($multi_sector);
                                     for ($i = 0; $i < $length; $i++) {
                                     ?>
-                                        <option value="<?php echo $multi_sector[$i] ?>"><?php echo $multi_sector[$i] ?></option>
+                                        <label>
+                                            <input type="checkbox" value="<?php echo $multi_sector[$i] ?>" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $multi_sector[$i] ?>
+                                        </label>
                                     <?php
                                         unset($multi_sector[$i]);
                                     } ?>
-                                </select>
+                                </div>
                             </div>
                             <br />
-                            <div class="form-group">
+                            <div class=" form-group">
                                 <input type="file" name="file" class="form-control" title="Upload PDF" id="actual-btn" hidden required />
                                 <label for="actual-btn">Choose File</label>
                                 <span id="file-chosen">No file chosen</span>
@@ -303,5 +376,58 @@ $personal_number = $row['phone_number'];
     </script>
     <script type="text/javascript" src="https://pdfanticopy.com/noprint.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        const form = document.querySelector('#myForm'); // replace 'myForm' with the ID of your form
+        const dropdown = document.querySelector('.select-dropdown');
+        const header = dropdown.querySelector('.select-dropdown__header');
+        const toggle = header.querySelector('.select-dropdown__toggle');
+        const options = dropdown.querySelector('.select-dropdown__options');
+        const checkboxes = options.querySelectorAll('input[type="checkbox"]');
 
+        function toggleOptions() {
+            options.style.display = options.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function handleCheckboxChange() {
+            const selectedOptions = Array.from(checkboxes)
+                .filter(checkbox => checkbox.checked)
+                .map(checkbox => checkbox.value);
+
+            // remove previously added hidden input fields
+            form.querySelectorAll('input[type="hidden"]').forEach(hiddenInput => {
+                hiddenInput.parentNode.removeChild(hiddenInput);
+            });
+
+            // create new hidden input fields with the selected values and append to the form
+            selectedOptions.forEach(option => {
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'selectedOptions[]'; // add [] to the name to pass the values as an array
+                hiddenInput.value = option;
+                form.appendChild(hiddenInput);
+            });
+        }
+
+        header.addEventListener('click', toggleOptions);
+        checkboxes.forEach(checkbox => checkbox.addEventListener('change', handleCheckboxChange));
+
+        form.addEventListener('submit', (event) => {
+            // submit the form using POST method
+            const formData = new FormData(form);
+            const selectedOptions = formData.getAll('selectedOptions[]');
+            if (selectedOptions.length > 0) {
+                // prevent the form from submitting normally if there are selected options
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                }).then(response => {
+                    console.log(response);
+                    // handle the response as needed
+                }).catch(error => {
+                    console.error(error);
+                    // handle the error as needed
+                });
+            }
+        });
+    </script>
 </body>

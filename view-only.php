@@ -1,7 +1,7 @@
 <?php
 
 include 'config.php';
-require 'front-controller.php';
+
 session_start();
 // Check if the user is logged in, if not then redirect him to login page
 if (!isset($_SESSION["whale_enterprises_loggedin"]) || $_SESSION["whale_enterprises_loggedin"] !== true) {
@@ -37,6 +37,7 @@ if ($sector_3 != '') {
 if ($sector_4 != '') {
     $sector = $sector_4;
 }
+$s_no = 1;
 
 
 ?>
@@ -77,10 +78,10 @@ if ($sector_4 != '') {
                 <div class="line3"></div>
             </div>
             <ul class="nav-links">
-                <li><a href="index">Home</a></li>
+                <li><a href="index.php">Home</a></li>
                 <li><a href="#" style="color:#fff" class="active">Documents</a></li>
-                <li><a href="useraccess" class="">User Details</a></li>
-                <li><a href="profile" class="">Profile</a></li>
+                <li><a href="useraccess.php" class="">User Details</a></li>
+                <li><a href="profile.php" class="">Profile</a></li>
                 <li><a href="logout.php" class="join-button">Logout</a></li>
             </ul>
         </nav>
@@ -98,9 +99,9 @@ if ($sector_4 != '') {
                 <div class="line3"></div>
             </div>
             <ul class="nav-links">
-                <li><a href="index">Home</a></li>
+                <li><a href="index.php">Home</a></li>
                 <li><a href="#" style="color:#fff" class="active">Documents</a></li>
-                <li><a href="profile">Profile</a></li>
+                <li><a href="profile.php">Profile</a></li>
                 <li><a href="logout.php" class="join-button">Logout</a></li>
             </ul>
         </nav>
@@ -113,6 +114,11 @@ if ($sector_4 != '') {
                 <button name="filter" class="search_details">Search</button>
             </form>
         </div>
+        <?php
+        if (isset($_COOKIE['status'])) {
+            printf("<center><p style='color:green;'>" . $_COOKIE['status'] . "</p></center>");
+        }
+        ?>
         <table class="rwd-table">
             <tbody>
                 <tr>
@@ -121,7 +127,6 @@ if ($sector_4 != '') {
                     <th>Revision Number</th>
                     <th>Description</th>
                     <th>Sector</th>
-                    <th>File</th>
                     <th> </th>
                 </tr>
                 <?php
@@ -133,7 +138,6 @@ if ($sector_4 != '') {
                         array_push($multi_sector, $sector_row['sector']);
                     }
                     $length = count($multi_sector);
-                    $s_no = 1;
                     $value_filter = $_POST['filter-value'];
                     for ($i = 0; $i < $length; $i++) {
                         if ($sector == '') {
@@ -149,7 +153,7 @@ if ($sector_4 != '') {
                                 <tr id='display'>
                                     <td data-th="S.No">
                                         <?php echo $s_no;
-                                        $s_no += 1; ?>
+                                        $s_no = $s_no + 1; ?>
                                     </td>
                                     <td data-th="Drawing Number">
                                         <?php echo $search_row['drawing_number']; ?>
@@ -163,15 +167,16 @@ if ($sector_4 != '') {
                                     <td data-th="Sector">
                                         <?php echo $search_row['sector']; ?>
                                     </td>
-                                    <td data-th="File">
-                                        <?php echo $search_row['file']; ?>
-                                    </td>
                                     <td style='display:flex; flex-direction:row;' data-th="">
-                                        <form action="file-view-only" method='POST' class="table-forms">
+                                        <form action="file-view-only.php" method='POST' class="table-forms">
                                             <input type="hidden" name="filename" value="<?php echo $search_row['file']; ?>" />
                                             <button type="submit" class="update_details" name="view-pdf">View</button>
                                         </form>
                                         <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
+                                            <form action="update-pdf-data.php" method='POST' class="table-forms">
+                                                <input type="hidden" name="filename" value="<?php echo $search_row['file']; ?>" />
+                                                <button type="submit" class="update_details" name="view-pdf">Edit</button>
+                                            </form>
                                             <form action="action.php" method='POST' class="table-forms">
                                                 <input type="hidden" name="delete-pdf" value="<?php echo $search_row['file']; ?>" />
                                                 <button type="submit" onclick="return confirm('Are you sure you want to Delete?')" class="update_details red" name="delete-pdf-btn">Delete</button>
@@ -209,7 +214,6 @@ if ($sector_4 != '') {
                             $length = 1;
                         }
                         if (mysqli_num_rows($result) > 0) {
-                            $s_no = 1;
                             while ($row = mysqli_fetch_assoc($result)) { ?>
                                 <tr id='display'>
                                     <td data-th="S.No">
@@ -229,15 +233,16 @@ if ($sector_4 != '') {
                                     <td data-th="Sector">
                                         <?php echo $row['sector']; ?>
                                     </td>
-                                    <td data-th="File">
-                                        <?php echo $row['file']; ?>
-                                    </td>
                                     <td style='display:flex; flex-direction:row;' data-th="">
-                                        <form action="file-view-only" method='POST' class="table-forms">
+                                        <form action="file-view-only.php" method='POST' class="table-forms">
                                             <input type="hidden" name="filename" value="<?php echo $row['file']; ?>" />
                                             <button type="submit" class="update_details button" data-modal="modalOne" name="view-pdf">View</button>
                                         </form>
                                         <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
+                                            <form action="update-pdf-data.php" method='POST' class="table-forms">
+                                                <input type="hidden" name="filename" value="<?php echo $row['file']; ?>" />
+                                                <button type="submit" class="update_details" name="view-pdf">Edit</button>
+                                            </form>
                                             <form action="action.php" method='POST' class="table-forms">
                                                 <input type="hidden" name="delete-pdf" value="<?php echo $row['file']; ?>" />
                                                 <button type="submit" onclick="return confirm('Are you sure you want to Delete?')" class="update_details red" name="delete-pdf-btn">Delete</button>

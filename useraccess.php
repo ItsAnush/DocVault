@@ -1,12 +1,11 @@
 <?php
 
 include 'config.php';
-require 'front-controller.php';
 
 session_start();
 // Check if the user is logged in, if not then redirect him to login page
 if (!isset($_SESSION["whale_enterprises_loggedin"]) || $_SESSION["whale_enterprises_loggedin"] !== true) {
-    header("location: login");
+    header("location: login.php");
     exit;
 }
 $username = $_SESSION["username"];
@@ -138,11 +137,11 @@ $admin = trim($row['designation']);
                 <div class="line3"></div>
             </div>
             <ul class="nav-links">
-                <li><a href="index">Home</a></li>
-                <li><a href="view-only">Documents</a></li>
+                <li><a href="index.php">Home</a></li>
+                <li><a href="view-only.php">Documents</a></li>
                 <li><a href="#" style="color:#fff" class="active">User Details</a></li>
-                <li><a href="profile">Profile</a></li>
-                <li><a href="logout" class="join-button">Logout</a></li>
+                <li><a href="profile.php">Profile</a></li>
+                <li><a href="logout.php" class="join-button">Logout</a></li>
             </ul>
         </nav>
         <section class="userlist">
@@ -158,7 +157,7 @@ $admin = trim($row['designation']);
                     <button name="filter" class="search_details">Search</button>
                 </form>
                 <center style="margin-top: 1.7vh;">
-                    <a class="add_user_button" href="register">Add User</a>
+                    <a class="add_user_button" href="register.php">Add User</a>
                 </center>
             </div>
             <table class="rwd-table">
@@ -214,7 +213,7 @@ $admin = trim($row['designation']);
                                         <?php echo $search_row['designation']; ?>
                                     </td>
                                     <td data-th="">
-                                        <form action="update-details" method='POST' class="table-forms">
+                                        <form action="update-details.php" method='POST' class="table-forms">
                                             <input style="cursor: pointer;" type="hidden" name="userid" value="<?php echo $search_row['username']; ?>" />
                                             <button type="submit" class="update_details" data-modal="modalOne" name="update_details">View</button>
                                         </form>
@@ -276,7 +275,7 @@ $admin = trim($row['designation']);
                                         <?php echo $row['designation']; ?>
                                     </td>
                                     <td data-th="">
-                                        <form action="update-details" method='POST' class="table-forms">
+                                        <form action="update-details.php" method='POST' class="table-forms">
                                             <input type="hidden" name="userid" value="<?php echo $row['username']; ?>" />
                                             <button type="submit" class="update_details button" data-modal="modalOne" name="update_details">View</button>
                                         </form>

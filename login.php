@@ -1,16 +1,14 @@
 <?php
 // Initialize the session
 session_start();
-require_once "config.php";
-require 'front-controller.php';
-
 // Check if the user is already logged in, if yes then redirect him to welcome page
 if (isset($_SESSION["whale_enterprises_loggedin"]) && $_SESSION["whale_enterprises_loggedin"] === true) {
-    header("location: index");
+    header("location: index.php");
     exit;
 }
 error_reporting(0);
 // Include config file
+require_once "config.php";
 
 // Define variables and initialize with empty values
 $username = $password = "";
@@ -66,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             $_SESSION["username"] = $username;
 
                             // Redirect user to welcome page
-                            header("location: index");
+                            header("location: index.php");
                         } else {
                             // Password is not valid, display a generic error message
                             $login_err = "Invalid Mail ID or Password.";

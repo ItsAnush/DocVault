@@ -9,23 +9,12 @@ if (!isset($_SESSION["whale_enterprises_loggedin"]) || $_SESSION["whale_enterpri
     exit;
 }
 $username = $_SESSION["username"];
-$userid = $_POST["userid"];
 error_reporting(0); // For not showing any error
 $sql = "SELECT * FROM users Where username IN ('$username')";
 $result = mysqli_query($link, $sql);
 $row = mysqli_fetch_assoc($result);
 $admin = trim($row['designation']);
-
-
-
-$sector_sql = "SELECT * FROM `sectors` WHERE username = '$userid'";
-$sector_result = mysqli_query($link, $sector_sql);
-$multi_sector = '';
-while ($sector_row = mysqli_fetch_assoc($sector_result)) {
-    $multi_sector = $multi_sector . $sector_row['sector'] . ' , ';
-}
-
-
+$file_name = $_POST["filename"];
 ?>
 
 <!DOCTYPE html>
@@ -127,8 +116,8 @@ while ($sector_row = mysqli_fetch_assoc($sector_result)) {
             </div>
             <ul class="nav-links">
                 <li><a href="index.php">Home</a></li>
-                <li><a href="view-only.php">Documents</a></li>
-                <li><a href="useraccess.php" style="color:#fff" class="active">User Details</a></li>
+                <li><a href="view-only.php" style="color:#fff" class="active">Documents</a></li>
+                <li><a href="#">User Details</a></li>
                 <li><a href="profile.php">Profile</a></li>
                 <li><a href="logout.php" class="join-button">Logout</a></li>
             </ul>
@@ -162,51 +151,28 @@ while ($sector_row = mysqli_fetch_assoc($sector_result)) {
                 <h1 class="logoo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h1>
             </div>
             <?php
-            $sql = "SELECT * FROM users WHERE username = '$userid'";
+            $sql = "SELECT * FROM `software_model` WHERE `file` = '$file_name'";
+            #echo $sql;
             $result = mysqli_query($link, $sql);
             while ($row = mysqli_fetch_assoc($result)) { ?>
                 <div class="rightbox">
                     <div class="profile">
-                        <h1>Update Details of <?php echo $row['name'] ?></h1>
-                        <form action="action.php" method="post" id="myForm">
-                            <label>Full Name</label>
-                            <input type="text" class="form-control" name="emp_name" placeholder="Enter Employee Name" value="<?php echo $row['name'] ?>" required><br />
-                            <label>Phone Number</label>
-                            <input type="text" class="form-control" name="emp_number" placeholder="Enter Phone Number" value="<?php echo $row['phone_number'] ?>" required><br />
-                            <label>Sector</label>
+                        <h1>Update Details of <?php echo $row['drawing_number'] ?></h1>
+                        <form action="action.php" method="post">
+                            <label>Drawing Number</label>
+                            <input type="text" class="form-control" name="drawing_number" placeholder="Enter Drawing Name" value="<?php echo $row['drawing_number'] ?>" required><br />
+                            <label>Revision Number</label>
+                            <input type="text" class="form-control" name="revision_number" placeholder="Enter Revision Number" value="<?php echo $row['revision_number'] ?>" required><br />
+                            <label>Description</label>
+                            <input type="text" class="form-control" name="description" placeholder="Enter Description" value="<?php echo $row['description'] ?>" required><br />
                             <br />
-                            <div class="select-dropdown">
-                                <div class="select-dropdown__header">
-                                    <div class="select-dropdown__title">Select Sector</div>
-                                    <div class="select-dropdown__toggle"></div>
-                                </div>
-                                <div class="select-dropdown__options" selectedOptions[]>
-                                    <label>
-                                        <input type="checkbox" value="Fabrication">Fabrication
-                                    </label>
-                                    <label>
-                                        <input type="checkbox" value="Parts">Parts
-                                    </label>
-                                    <label>
-                                        <input type="checkbox" value="New Product Development">New Product Development
-                                    </label>
-                                    <label>
-                                        <input type="checkbox" value="Machine Shop">Machine Shop
-                                    </label>
-                                </div>
-                            </div>
-                            <?php if (trim($admin) == 'SuperAdmin') { ?>
-                                <label>privilege</label>
-                                <select class="form-control" name="privilege" id="privilege">
-                                    <option value=" <?php echo $row['designation'] ?>"><?php echo $row['designation'] ?></option>
-                                    <option value="Admin">Admin</option>
-                                    <option value="User">User</option>
-                                </select><br />
-                            <?php }
-                            if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
-                                <input style="display:none" type="text" name="emp_username" value="<?php echo $row['username'] ?>">
+
+                            <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
+                                <input style="display:none" type="text" name="id" value="<?php echo $row['id'] ?>">
+                                <input style="display:none" type="text" name="file" value="<?php echo $row['file'] ?>">
+                                <input style="display:none" type="text" name="sector" value="<?php echo $row['sector'] ?>">
                                 <div class="flex-row">
-                                    <button type="submit" class="btnRegister" name="update-details" onclick="return confirm('Are you sure you want to Submit?')" value="Submit">Update</button>
+                                    <button type="submit" class="btnRegister" name="update-pdf-details" onclick="return confirm('Are you sure you want to Submit?')" value="Submit">Update</button>
                                     <button type="submit" class="btnRegister delete" onclick="return confirm('Are you sure you want to Delete?')" name="delete-user">Delete</button>
                                 </div>
                             <?php } ?>
@@ -225,64 +191,6 @@ while ($sector_row = mysqli_fetch_assoc($sector_result)) {
 
 
 </body>
-
-
-
-
-<script>
-    const form = document.querySelector('#myForm'); // replace 'myForm' with the ID of your form
-    const dropdown = document.querySelector('.select-dropdown');
-    const header = dropdown.querySelector('.select-dropdown__header');
-    const toggle = header.querySelector('.select-dropdown__toggle');
-    const options = dropdown.querySelector('.select-dropdown__options');
-    const checkboxes = options.querySelectorAll('input[type="checkbox"]');
-
-    function toggleOptions() {
-        options.style.display = options.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function handleCheckboxChange() {
-        const selectedOptions = Array.from(checkboxes)
-            .filter(checkbox => checkbox.checked)
-            .map(checkbox => checkbox.value);
-
-        // remove previously added hidden input fields
-        form.querySelectorAll('input[type="hidden"]').forEach(hiddenInput => {
-            hiddenInput.parentNode.removeChild(hiddenInput);
-        });
-
-        // create new hidden input fields with the selected values and append to the form
-        selectedOptions.forEach(option => {
-            const hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = 'selectedOptions[]'; // add [] to the name to pass the values as an array
-            hiddenInput.value = option;
-            form.appendChild(hiddenInput);
-        });
-    }
-
-    header.addEventListener('click', toggleOptions);
-    checkboxes.forEach(checkbox => checkbox.addEventListener('change', handleCheckboxChange));
-
-    form.addEventListener('submit', (event) => {
-        // submit the form using POST method
-        const formData = new FormData(form);
-        const selectedOptions = formData.getAll('selectedOptions[]');
-        if (selectedOptions.length > 0) {
-            // prevent the form from submitting normally if there are selected options
-            fetch(form.action, {
-                method: 'POST',
-                body: formData
-            }).then(response => {
-                console.log(response);
-                // handle the response as needed
-            }).catch(error => {
-                console.error(error);
-                // handle the error as needed
-            });
-        }
-    });
-</script>
 
 <script src="./js/script.js"></script>
 <script language="javascript">

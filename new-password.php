@@ -1,8 +1,6 @@
 <?php
 
 include 'config.php';
-require_once "config.php";
-require 'front-controller.php';
 
 session_start();
 // Check if the user is logged in, if not then redirect him to login page
@@ -73,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                                 // Store data in session variables
                                 $_SESSION["Success"] = "You have successfully reset your Password!";
-                                header("location: login");
+                                header("location: login.php");
                             } else {
                                 echo "Oops! Something went wrong. Please try again later.";
                             }
