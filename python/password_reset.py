@@ -17,9 +17,9 @@ email = 'kavinkumar.cs21@bitsathy.ac.in'
 print(email)
 
 mydb = mysql.connector.connect(
-  host="localhost",
+  host="localhost", #127.0.0.0
   user="root",
-  password="",
+  password="", #root
   database="whale_enterprises"
 )
 mycursor = mydb.cursor()
@@ -34,9 +34,8 @@ mydb.commit()
 
 server = smtplib.SMTP('smtp.gmail.com',587)
 server.starttls()
-server.login('kavin.apm2003@gmail.com','pnmqteqfopbjoqxn')
-message = ''' Whale Enterprises Pvt Ltd
-Subject: Password Reset for Whale Login - Regarding
+server.login('kavin.apm2003@gmail.com','pnmqteqfopbjoqxn') #should be changed
+message = '''Subject: Password Reset for Whale Login - Regarding
 
 Dear User,
 We received a request to reset your password for your Whale Enterprises's Documents' account. If you did not request a password reset, please ignore this email. To reset your password, please use the following One-Time Password (OTP): {0}. 
@@ -53,4 +52,4 @@ Tamilnadu
 India
 Telephone: +91 9566555628
 '''.format(OTP)
-server.sendmail('kavin.apm2003@gmail.com',email,message)
+server.sendmail('kavin.apm2003@gmail.com',email,message) #should be changes

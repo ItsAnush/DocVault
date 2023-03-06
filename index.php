@@ -30,7 +30,7 @@ $personal_number = $row['phone_number'];
     <link rel="stylesheet" href="./css/style.css">
     <link rel="stylesheet" href="./css/profile.css">
     <link rel="icon" type="image/x-icon" href="./assets/logo.png">
-    <link rel='stylesheet' href='./css/font-awesome.min.css'>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css'>
     <script src="./js/prefixfree.min.js"></script>
 </head>
 <style>

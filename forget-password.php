@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Close statement
 } else { ?>
-    <p style="text-align:center; padding-top:49vh;">Please wait a moment or try again later</p>
+    <p style="text-align:center;">Please wait a moment or try again later</p>
 <?php }
 // Close connection
 
@@ -56,6 +56,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Whale Enterprise | Reset Password</title>
     <link rel="stylesheet" href="./css/login-style.css">
     <link rel="icon" type="image/x-icon" href="./assets/logo.png">
+    <link rel="icon" type="image/x-icon" href="./assets/logo.png">
+
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
 
 </head>
