@@ -15,6 +15,92 @@ $result = mysqli_query($link, $sql);
 $row = mysqli_fetch_assoc($result);
 $admin = trim($row['designation']);
 $file_name = $_POST["filename"];
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    if (isset($_POST['delete-pdf-btn'])) {
+        $file_name = $_POST['delete-pdf'];
+        #echo $filename;
+        $path = "./uploads/";
+        $file = $path . $file_name;
+        #echo $file;
+        $status = unlink($file);
+        if ($status) {
+            #echo "File deleted successfully";
+            $sql = "DELETE from software_model WHERE file = '$file_name'";
+            #echo $sql;
+            if (mysqli_query($link, $sql)) {
+                setcookie("delete_status", "Successfully removed the file : $file_name", time() + (7), "/");
+                #echo "<center><p style='color:green';>Successfully Removed the File.</p></center>";
+            } else {
+                setcookie("delete_status", "Failed to remove the file : $file_name.", time() + (7), "/");
+                #echo "<center><p style='color:red';>Failed to remove the file</p></center>";
+            }
+        } else {
+            #echo "Sorry!";
+        }
+        header('Location: view-only.php', true, 303);
+        exit();
+    } else if (isset($_POST['update-pdf-details'])) {
+        $d_no = $_POST['drawing_number'];
+        $r_no = $_POST['revision_number'];
+        $desc = $_POST['description'];
+        $id = $_POST['id'];
+        $sector = $_POST['sector'];
+        $check_file_sql = "SELECT * FROM `software_model` WHERE id = '$id' and sector = '$sector'";
+        echo $check_file_sql;
+        echo "<br/>";
+        $check_file_result = mysqli_query($link, $check_file_sql);
+        $unique_name = $unique_id . $pname;
+        if (mysqli_num_rows($check_file_result) > 0) {
+            $sql = "SELECT * FROM `software_model` WHERE drawing_number = '$d_no' and `sector` = '$sector' and id != '$id'";
+            $result = mysqli_query($link, $sql);
+            $row = mysqli_fetch_assoc($result);
+            if (mysqli_num_rows($result) > 0) {
+                $sql = "DELETE FROM `software_model` WHERE id = '" . $row['id'] . "' and `sector` = '$sector'";
+                echo $sql;
+                echo "<br/>";
+                mysqli_query($link, $sql);
+                $uploads_dir = 'uploads';
+                $file_path_name = $row['file'];
+                $file_path = $uploads_dir . '/' . $file_path_name; // Replace with the actual file path
+                #echo $file_path;
+                if (file_exists($file_path)) {
+                    if (unlink($file_path)) {
+                        #echo "File deleted successfully.";
+                    } else {
+                        #echo "Unable to delete the file.";
+                    }
+                } else {
+                    #echo "File not found.";
+                    #echo "<br/>";
+                }
+            }
+            $sql = "UPDATE `software_model` SET  drawing_number = '$d_no' WHERE id = '$id'";
+            mysqli_query($link, $sql);
+            echo $sql;
+            echo "<br/>";
+            $sql = "UPDATE `software_model` SET  revision_number = '$r_no' WHERE id = '$id'";
+            mysqli_query($link, $sql);
+            echo $sql;
+            echo "<br/>";
+            $sql = "UPDATE `software_model` SET  `description` = '$desc' WHERE id = '$id'";
+            echo $sql;
+            echo "<br/>";
+            if (mysqli_query($link, $sql)) {
+                setcookie("status", "Successfully Updated!", time() + (7), "/");
+                #echo "<center><p style='color:green';>Successfully Updated!</p></center>";
+            } else {
+                setcookie("status", "Update Failed!", time() + (7), "/");
+                #echo "<center><p style='color:red';>Update Failed!</p></center>";
+            }
+        } else {
+            setcookie("status", "No file found!", time() + (7), "/");
+        }
+        header('Location: view-only.php');
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -158,7 +244,7 @@ $file_name = $_POST["filename"];
                 <div class="rightbox">
                     <div class="profile">
                         <h1>Update Details of <?php echo $row['drawing_number'] ?></h1>
-                        <form action="action.php" method="post">
+                        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
                             <label>Drawing Number</label>
                             <input type="text" class="form-control" name="drawing_number" placeholder="Enter Drawing Name" value="<?php echo $row['drawing_number'] ?>" required><br />
                             <label>Revision Number</label>
@@ -170,10 +256,11 @@ $file_name = $_POST["filename"];
                             <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
                                 <input style="display:none" type="text" name="id" value="<?php echo $row['id'] ?>">
                                 <input style="display:none" type="text" name="file" value="<?php echo $row['file'] ?>">
+                                <input style="display:none" type="text" name="delete-pdf" value="<?php echo $row['file'] ?>">
                                 <input style="display:none" type="text" name="sector" value="<?php echo $row['sector'] ?>">
                                 <div class="flex-row">
                                     <button type="submit" class="btnRegister" name="update-pdf-details" onclick="return confirm('Are you sure you want to Submit?')" value="Submit">Update</button>
-                                    <button type="submit" class="btnRegister delete" onclick="return confirm('Are you sure you want to Delete?')" name="delete-user">Delete</button>
+                                    <button type="submit" class="btnRegister delete" onclick="return confirm('Are you sure you want to Delete?')" name="delete-pdf-btn">Delete</button>
                                 </div>
                             <?php } ?>
                         </form>

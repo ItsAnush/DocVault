@@ -13,7 +13,13 @@ require_once "config.php";
 // Define variables and initialize with empty values
 $username = $password = "";
 $username_err = $password_err = $otp_error = "";
-$username = $_GET['username'];
+
+if (!isset($_COOKIE["password_username"])) {
+    #header("location: forget-password.php");
+    $_SESSION['otp_error_1'] = "Cookie not set";
+} else {
+    $username = $_COOKIE["password_username"];
+}
 
 // Processing form data when form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -24,38 +30,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         $password = trim($_POST["password"]);
     }
-    $self_user = $_POST['self_user'];
-    echo $self_user;
-    $usernamee = $_SESSION["forget-password-whale-username"];
 
     // Validate credentials
     if (empty($password_err)) {
         // Prepare a select statement
-        $sql = "SELECT * FROM `users` WHERE username = '$usernamee'";
+        $sql = "SELECT * FROM `users` WHERE username = '$username'";
         echo $sql;
         $result = mysqli_query($link, $sql);
         if (mysqli_num_rows($result) == 1) {
             $row = mysqli_fetch_assoc($result);
             if ($row['code'] == $password) {
-                $url = "new-password.php"; // replace with the URL of the API endpoint
-                $data = array(
-                    "username" => "$username"
-                ); // replace with the parameters you want to send
-
-                $curl = curl_init();
-                curl_setopt($curl, CURLOPT_URL, $url);
-                curl_setopt($curl, CURLOPT_POST, true);
-                curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
-                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-                $response = curl_exec($curl);
-                curl_close($curl);
-
-                // do something with the response
-                echo $response;
-                $_SESSION["forget-password-whale-username"] = $self_user;
-                $sql = "UPDATE `users` SET code = '0' WHERE username = '$self_user'";
+                $sql = "UPDATE `users` SET code = '0' WHERE username = '$username'";
                 $result = mysqli_query($link, $sql);
-                header("Location: new-password.php?username=" . urlencode($data["username"]));
+                setcookie("password_username", $username, time() + (1200 * 30), "/");
+                header("Location: new-password.php");
             } else {
                 // Password is not valid, display a generic error message
                 $otp_error = "Entered OTP is incorrect";
@@ -145,8 +133,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                                     } ?>
                                     <div class="field padding-bottom--24">
                                         <label for="password">One Time Password</label>
-                                        <input autocomplete="off" type="password" name="password" placeholder="Enter your OTP" minlength="6" class="form-control <?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>">
-                                        <span class="invalid-feedback"><?php echo $otp_error; ?></span>
+                                        <input autocomplete="off" type="password" name="password" placeholder="Enter your OTP" minlength="6" maxlength="6" class="form-control <?php echo (!empty($password_err)) ? 'is-invalid' : ''; ?>">
                                     </div>
 
                                     <div class="field padding-bottom--24">

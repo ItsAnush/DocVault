@@ -40,6 +40,35 @@ if ($sector_4 != '') {
 $s_no = 1;
 
 
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    if (isset($_POST['delete-pdf-btn'])) {
+        $file_name = $_POST['delete-pdf'];
+        #echo $filename;
+        $path = "./uploads/";
+        $file = $path . $file_name;
+        #echo $file;
+        $status = unlink($file);
+        if ($status) {
+            #echo "File deleted successfully";
+            $sql = "DELETE from software_model WHERE file = '$file_name'";
+            #echo $sql;
+            if (mysqli_query($link, $sql)) {
+                setcookie("delete_status", "Successfully removed the file : $file_name", time() + (7), "/");
+                #echo "<center><p style='color:green';>Successfully Removed the File.</p></center>";
+            } else {
+                setcookie("delete_status", "Failed to remove the file : $file_name.", time() + (7), "/");
+                #echo "<center><p style='color:red';>Failed to remove the file</p></center>";
+            }
+        } else {
+            #echo "Sorry!";
+        }
+        header('Location: view-only.php', true, 303);
+        exit();
+    }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -177,7 +206,7 @@ $s_no = 1;
                                                 <input type="hidden" name="filename" value="<?php echo $search_row['file']; ?>" />
                                                 <button type="submit" class="update_details" name="view-pdf">Edit</button>
                                             </form>
-                                            <form action="action.php" method='POST' class="table-forms">
+                                            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method='POST' class="table-forms">
                                                 <input type="hidden" name="delete-pdf" value="<?php echo $search_row['file']; ?>" />
                                                 <button type="submit" onclick="return confirm('Are you sure you want to Delete?')" class="update_details red" name="delete-pdf-btn">Delete</button>
                                             </form>
@@ -243,7 +272,7 @@ $s_no = 1;
                                                 <input type="hidden" name="filename" value="<?php echo $row['file']; ?>" />
                                                 <button type="submit" class="update_details" name="view-pdf">Edit</button>
                                             </form>
-                                            <form action="action.php" method='POST' class="table-forms">
+                                            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method='POST' class="table-forms">
                                                 <input type="hidden" name="delete-pdf" value="<?php echo $row['file']; ?>" />
                                                 <button type="submit" onclick="return confirm('Are you sure you want to Delete?')" class="update_details red" name="delete-pdf-btn">Delete</button>
                                             </form>

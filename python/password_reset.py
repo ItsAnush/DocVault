@@ -12,9 +12,9 @@ OTP = ""
 for i in range(6) :
     OTP += digits[math.floor(random.random() * 10)]
 OTP = OTP
-email = sys.argv[1]
+#email = sys.argv[1]
+email = 'kavinkumar.cs21@bitsathy.ac.in'
 print(email)
-#email = 'kavinkumar.cs21@bitsathy.ac.in'
 
 mydb = mysql.connector.connect(
   host="localhost",

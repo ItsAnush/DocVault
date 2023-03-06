@@ -1,15 +1,11 @@
 <?php
 include 'config.php';
+error_reporting(0); // For not showing any error
 
 session_start();
-// Check if the user is logged in, if not then redirect him to login page
-if (!isset($_SESSION["whale_enterprises_loggedin"]) || $_SESSION["whale_enterprises_loggedin"] !== true) {
-    header("location: login.php");
-    exit;
-}
+
 $username = $_SESSION["username"];
 
-error_reporting(0); // For not showing any error
 $sql = "SELECT * FROM student_details WHERE email IN ('$username')";
 
 function myfunction($a, $b)
@@ -204,87 +200,4 @@ if (isset($_POST['profile-update-details'])) {
         #echo "<center><p style='color:red';>Update Failed.</p></center>";
     }
     header('Location: profile.php');
-}
-if (isset($_POST['delete-pdf-btn'])) {
-    $file_name = $_POST['delete-pdf'];
-    #echo $filename;
-    $path = "./uploads/";
-    $file = $path . $file_name;
-    #echo $file;
-    $status = unlink($file);
-    if ($status) {
-        #echo "File deleted successfully";
-        $sql = "DELETE from software_model WHERE file = '$file_name'";
-        #echo $sql;
-        if (mysqli_query($link, $sql)) {
-            setcookie("delete_status", "Successfully removed the file : $file_name", time() + (7), "/");
-            #echo "<center><p style='color:green';>Successfully Removed the File.</p></center>";
-        } else {
-            setcookie("delete_status", "Failed to remove the file : $file_name.", time() + (7), "/");
-            #echo "<center><p style='color:red';>Failed to remove the file</p></center>";
-        }
-    } else {
-        #echo "Sorry!";
-    }
-
-    header('Location: view-only.php');
-}
-
-if (isset($_POST['update-pdf-details'])) {
-    $d_no = $_POST['drawing_number'];
-    $r_no = $_POST['revision_number'];
-    $desc = $_POST['description'];
-    $id = $_POST['id'];
-    $sector = $_POST['sector'];
-    $check_file_sql = "SELECT * FROM `software_model` WHERE id = '$id' and sector = '$sector'";
-    echo $check_file_sql;
-    echo "<br/>";
-    $check_file_result = mysqli_query($link, $check_file_sql);
-    $unique_name = $unique_id . $pname;
-    if (mysqli_num_rows($check_file_result) > 0) {
-        $sql = "SELECT * FROM `software_model` WHERE drawing_number = '$d_no' and `sector` = '$sector' and id != '$id'";
-        $result = mysqli_query($link, $sql);
-        $row = mysqli_fetch_assoc($result);
-        if (mysqli_num_rows($result) > 0) {
-            $sql = "DELETE FROM `software_model` WHERE id = '" . $row['id'] . "' and `sector` = '$sector'";
-            echo $sql;
-            echo "<br/>";
-            mysqli_query($link, $sql);
-            $uploads_dir = 'uploads';
-            $file_path_name = $row['file'];
-            $file_path = $uploads_dir . '/' . $file_path_name; // Replace with the actual file path
-            #echo $file_path;
-            if (file_exists($file_path)) {
-                if (unlink($file_path)) {
-                    #echo "File deleted successfully.";
-                } else {
-                    #echo "Unable to delete the file.";
-                }
-            } else {
-                #echo "File not found.";
-                #echo "<br/>";
-            }
-        }
-        $sql = "UPDATE `software_model` SET  drawing_number = '$d_no' WHERE id = '$id'";
-        mysqli_query($link, $sql);
-        echo $sql;
-        echo "<br/>";
-        $sql = "UPDATE `software_model` SET  revision_number = '$r_no' WHERE id = '$id'";
-        mysqli_query($link, $sql);
-        echo $sql;
-        echo "<br/>";
-        $sql = "UPDATE `software_model` SET  `description` = '$desc' WHERE id = '$id'";
-        echo $sql;
-        echo "<br/>";
-        if (mysqli_query($link, $sql)) {
-            setcookie("status", "Successfully Updated!", time() + (7), "/");
-            #echo "<center><p style='color:green';>Successfully Updated!</p></center>";
-        } else {
-            setcookie("status", "Update Failed!", time() + (7), "/");
-            #echo "<center><p style='color:red';>Update Failed!</p></center>";
-        }
-    } else {
-        setcookie("status", "No file found!", time() + (7), "/");
-    }
-    header('Location: view-only.php');
 }

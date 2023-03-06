@@ -1,7 +1,6 @@
 <?php
 // Initialize the session
 session_start();
-require 'front-controller.php';
 require_once "config.php";
 
 // Check if the user is already logged in, if yes then redirect him to welcome page
@@ -9,7 +8,7 @@ if (isset($_SESSION["whale_enterprises_loggedin"]) && $_SESSION["whale_enterpris
     header("location: index.php");
     exit;
 }
-error_reporting(0);
+#error_reporting(0);
 // Include config file
 
 // Define variables and initialize with empty values
@@ -18,7 +17,6 @@ $username_err = $password_err = $login_err = "";
 
 // Processing form data when form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
     // Check if username is empty
     if (empty(trim($_POST["username"]))) {
         $username_err = "Please enter your Mail ID.";
@@ -29,41 +27,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $result = mysqli_query($link, $sql);
         if (mysqli_num_rows($result) == 1) {
             $password_result = exec("python ./python/password_reset.py" . " $username");
-
-            $url = "verify-otp.php"; // replace with the URL of the API endpoint
-            $data = array(
-                "username" => "$username"
-            ); // replace with the parameters you want to send
-
-            $curl = curl_init();
-            curl_setopt($curl, CURLOPT_URL, $url);
-            curl_setopt($curl, CURLOPT_POST, true);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data));
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-            $response = curl_exec($curl);
-            curl_close($curl);
-
-            // do something with the response
-            echo $response;
-            $_SESSION["forget-password-whale-username"] = $username;
-            header("Location: verify-otp.php?username=" . urlencode($data["username"]));
+            if (!$password_result) {
+                $_SESSION['login_err'] = "There is an unexpected error! Try again in few minutes";
+            }
+            $cookie_name = "password_username";
+            setcookie($cookie_name, $username, time() + 3600); // 3600 = 1 hr
+            header("Location: verify-otp.php");
         } else {
-            // Username doesn't exist, display a generic error message
-            $login_err = "Mail ID does not exists.";
-            $_SESSION['login_err'] = $login_err;
-            header("Location: forget-password");
+            $_SESSION['login_err'] = "Email ID not found";
         }
     }
+    mysqli_close($link);
 
     // Close statement
-    mysqli_stmt_close($stmt);
-} else {
-    echo "Oops! Something went wrong. Please try again later.";
-}
-
-
+} else { ?>
+    <p style="text-align:center; padding-top:49vh;">Please wait a moment or try again later</p>
+<?php }
 // Close connection
-mysqli_close($link);
 
 ?>
 <!DOCTYPE html>
@@ -139,12 +119,10 @@ mysqli_close($link);
                                         <label for="username">Mail ID</label>
                                         <input autocomplete="off" type="email" name="username" placeholder="Enter Mail ID" required class="form-control  <?php echo (!empty($username_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $username; ?>">
                                     </div>
-                                    <span class="invalid-feedback"><?php echo $username_err; ?></span>
+                                    <span style="color:red" class="alert alert-danger" class="invalid-feedback"><?php echo $username_err; ?></span>
                                     <div class="field padding-bottom--24">
-                                        <input style="background: blue;" type="submit" value="Send OTP">
+                                        <input style="background: blue;" name="send-otp-btn" type="submit" value="Send OTP">
                                     </div>
-
-
                                 </form>
                             </div>
                         </div>

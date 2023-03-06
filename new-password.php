@@ -5,8 +5,11 @@ include 'config.php';
 session_start();
 // Check if the user is logged in, if not then redirect him to login page
 
-$usernamee = $_SESSION["forget-password-whale-username"];
-
+if (!isset($_COOKIE["password_username"])) {
+    header("location: verify-otp.php");
+} else {
+    $usernamee = $_COOKIE["password_username"];
+}
 //error_reporting(0); // For not showing any error
 $sql = "SELECT * FROM users Where username IN ('$usernamee')";
 $result = mysqli_query($link, $sql);
