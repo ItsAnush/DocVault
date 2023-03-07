@@ -89,10 +89,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         background: linear-gradient(to right, #ecf0fb, #f5f6f8);
     }
 
-    .rwd-table {
-        transform: scale(.95);
+    .container {
+        min-width: fit-content;
     }
 </style>
+
 
 <body>
     <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
@@ -147,149 +148,156 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (isset($_COOKIE['status'])) {
             printf("<center><p style='color:green;'>" . $_COOKIE['status'] . "</p></center>");
         }
-        ?>
-        <table class="rwd-table">
-            <tbody>
-                <tr>
-                    <th>S.No</th>
-                    <th>Drawing Number</th>
-                    <th>Revision Number</th>
-                    <th>Description</th>
-                    <th>Sector</th>
-                    <th> </th>
-                </tr>
-                <?php
-                if (isset($_POST['filter'])) {
-                    $sector_sql = "SELECT * FROM `sectors` WHERE username = '$username'";
-                    $sector_result = mysqli_query($link, $sector_sql);
-                    $multi_sector = array();
-                    while ($sector_row = mysqli_fetch_assoc($sector_result)) {
-                        array_push($multi_sector, $sector_row['sector']);
-                    }
-                    $length = count($multi_sector);
-                    $value_filter = $_POST['filter-value'];
-                    for ($i = 0; $i < $length; $i++) {
-                        if ($sector == '') {
-                            $search_sql = "SELECT * from software_model where CONCAT(drawing_number, revision_number,`sector`, `description`, `file`) LIKE '%$value_filter%' and sector = '$multi_sector[$i]'";
-                            unset($multi_sector[$i]);
+        ?><section class="container">
+            <table>
+                <thead class="visible@l">
+
+                    <tr>
+                        <th>S.No</th>
+                        <th>Drawing Number</th>
+                        <th>Revision Number</th>
+                        <th>Description</th>
+                        <th>Sector</th>
+                        <th> </th>
+                        <th> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if (isset($_POST['filter'])) {
+                        $sector_sql = "SELECT * FROM `sectors` WHERE username = '$username'";
+                        $sector_result = mysqli_query($link, $sector_sql);
+                        $multi_sector = array();
+                        while ($sector_row = mysqli_fetch_assoc($sector_result)) {
+                            array_push($multi_sector, $sector_row['sector']);
                         }
-                        if ($sector != '') {
-                            $search_sql = "SELECT * from software_model where CONCAT(drawing_number, revision_number,`sector`, `description`, `file`) LIKE '%$value_filter%' and sector = '$sector';";
-                        }
-                        $search_result = mysqli_query($link, $search_sql);
-                        if (mysqli_num_rows($search_result) > 0) {
-                            while ($search_row = mysqli_fetch_assoc($search_result)) { ?>
-                                <tr id='display'>
-                                    <td data-th="S.No">
-                                        <?php echo $s_no;
-                                        $s_no = $s_no + 1; ?>
-                                    </td>
-                                    <td data-th="Drawing Number">
-                                        <?php echo $search_row['drawing_number']; ?>
-                                    </td>
-                                    <td data-th="Revision Number">
-                                        <?php echo $search_row['revision_number']; ?>
-                                    </td>
-                                    <td data-th="Description">
-                                        <?php echo $search_row['description']; ?>
-                                    </td>
-                                    <td data-th="Sector">
-                                        <?php echo $search_row['sector']; ?>
-                                    </td>
-                                    <td style='display:flex; flex-direction:row;' data-th="">
-                                        <form action="file-view-only.php" method='POST' class="table-forms">
-                                            <input type="hidden" name="filename" value="<?php echo $search_row['file']; ?>" />
-                                            <button type="submit" class="update_details" name="view-pdf">View</button>
-                                        </form>
-                                        <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
-                                            <form action="update-pdf-data.php" method='POST' class="table-forms">
-                                                <input type="hidden" name="filename" value="<?php echo $search_row['file']; ?>" />
-                                                <button type="submit" class="update_details" name="view-pdf">Edit</button>
-                                            </form>
-                                            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method='POST' class="table-forms">
-                                                <input type="hidden" name="delete-pdf" value="<?php echo $search_row['file']; ?>" />
-                                                <button type="submit" onclick="return confirm('Are you sure you want to Delete?')" class="update_details red" name="delete-pdf-btn">Delete</button>
-                                            </form>
-                                        <?php } ?>
-                                    </td>
-                                </tr>
-                            <?php
+                        $length = count($multi_sector);
+                        $value_filter = $_POST['filter-value'];
+                        for ($i = 0; $i < $length; $i++) {
+                            if ($sector == '') {
+                                if ($value_filter != '') {
+                                    $search_sql = "SELECT * from software_model where CONCAT(drawing_number, revision_number,`sector`, `description`, `file`) LIKE '%$value_filter%' and sector = '$multi_sector[$i]'";
+                                    unset($multi_sector[$i]);
+                                } else {
+                                    $search_sql = "SELECT * from software_model WHERE sector = '$multi_sector[$i]'";
+                                    unset($multi_sector[$i]);
+                                }
                             }
-                        } else { ?>
-                            <tr id='display'>
-                            </tr>
-                            <?php
+                            if ($sector != '') {
+                                $search_sql = "SELECT * from software_model where CONCAT(drawing_number, revision_number,`sector`, `description`, `file`) LIKE '%$value_filter%' and sector = '$sector';";
+                            }
+                            $search_result = mysqli_query($link, $search_sql);
+                            if (mysqli_num_rows($search_result) > 0) {
+                                while ($search_row = mysqli_fetch_assoc($search_result)) { ?>
+                                    <tr>
+                                        <td><strong class="hidden@l">S.no</strong>&nbsp;
+                                            <?php echo $s_no;
+                                            $s_no += 1; ?>
+                                        </td>
+                                        <td><strong class="hidden@l">Drawing Number</strong>&nbsp;
+                                            <?php echo $search_row['drawing_number']; ?>
+                                        </td>
+                                        <td><strong class="hidden@l">Revision Number</strong>&nbsp;
+                                            <?php echo $search_row['revision_number']; ?>
+                                        </td>
+                                        <td><strong class="hidden@l">Description</strong>&nbsp;
+                                            <?php echo $search_row['description']; ?>
+                                        </td>
+                                        <td><strong class="hidden@l">Sector</strong>&nbsp;
+                                            <?php echo $search_row['sector']; ?>
+                                        </td>
+                                        <td style='display:flex; flex-direction:row;'>
+                                            <form action="file-view-only.php" method='POST' class="table-forms">
+                                                <input type="hidden" name="filename" value="<?php echo $search_row['file']; ?>" />
+                                                <button type="submit" class="update_details button" data-modal="modalOne" name="view-pdf">View</button>
+                                            </form>
+                                            <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
+                                                <form action="update-pdf-data.php" method='POST' class="table-forms">
+                                                    <input type="hidden" name="filename" value="<?php echo $search_row['file']; ?>" />
+                                                    <button type="submit" class="update_details" name="view-pdf">Edit</button>
+                                                </form>
+                                            <?php } ?>
+                                        </td>
+                                        <td>
+                                            <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
+                                                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method='POST' class="table-forms">
+                                                    <input type="hidden" name="delete-pdf" value="<?php echo $search_row['file']; ?>" />
+                                                    <button type="submit" onclick="return confirm('Are you sure you want to Delete?')" class="update_details red" name="delete-pdf-btn">Delete</button>
+                                                </form> <?php } ?>
+                                        </td>
+                                    </tr>
+                                <?php
+                                }
+                            }
                         }
                     }
-                }
-                if (isset($_POST['filter']) == false) {
-                    $sector_sql = "SELECT * FROM `sectors` WHERE username = '$username'";
-                    $sector_result = mysqli_query($link, $sector_sql);
-                    $multi_sector = array();
-                    while ($sector_row = mysqli_fetch_assoc($sector_result)) {
-                        array_push($multi_sector, $sector_row['sector']);
-                    }
-                    $length = count($multi_sector);
-                    for ($i = 0; $i < $length; $i++) {
-                        if ($sector == '') {
-                            $sql = "SELECT * FROM software_model WHERE sector='$multi_sector[$i]' ORDER BY id DESC";
-                            $result = mysqli_query($link, $sql);
-                            unset($multi_sector[$i]);
+                    if (isset($_POST['filter']) == false) {
+                        $sector_sql = "SELECT * FROM `sectors` WHERE username = '$username'";
+                        $sector_result = mysqli_query($link, $sector_sql);
+                        $multi_sector = array();
+                        while ($sector_row = mysqli_fetch_assoc($sector_result)) {
+                            array_push($multi_sector, $sector_row['sector']);
                         }
-                        if ($sector != '') {
-                            $sql = "SELECT * FROM software_model WHERE sector='$sector' ORDER BY id DESC";
-                            $result = mysqli_query($link, $sql);
-                            unset($multi_sector[$i]);
-                            $length = 1;
-                        }
-                        if (mysqli_num_rows($result) > 0) {
-                            while ($row = mysqli_fetch_assoc($result)) { ?>
-                                <tr id='display'>
-                                    <td data-th="S.No">
-                                        <?php echo $s_no;
-                                        $s_no += 1; ?>
-                                    </td>
-                                    <td data-th="Drawing Number">
-                                        <?php echo $row['drawing_number']; ?>
-                                    </td>
-                                    <td data-th="Revision Number">
-                                        <?php echo $row['revision_number']; ?>
-                                    </td>
-                                    <td data-th="Description">
-                                        <?php echo $row['description']; ?>
+                        $length = count($multi_sector);
+                        for ($i = 0; $i < $length; $i++) {
+                            if ($sector == '') {
+                                $sql = "SELECT * FROM software_model WHERE sector='$multi_sector[$i]' ORDER BY id DESC";
+                                $result = mysqli_query($link, $sql);
+                                unset($multi_sector[$i]);
+                            }
+                            if ($sector != '') {
+                                $sql = "SELECT * FROM software_model WHERE sector='$sector' ORDER BY id DESC";
+                                $result = mysqli_query($link, $sql);
+                                unset($multi_sector[$i]);
+                                $length = 1;
+                            }
+                            if (mysqli_num_rows($result) > 0) {
+                                while ($row = mysqli_fetch_assoc($result)) { ?>
+                                    <tr>
+                                        <td><strong class="hidden@l">S.no</strong>&nbsp;
+                                            <?php echo $s_no;
+                                            $s_no += 1; ?>
+                                        </td>
+                                        <td><strong class="hidden@l">Drawing Number</strong>&nbsp;
+                                            <?php echo $row['drawing_number']; ?>
+                                        </td>
+                                        <td><strong class="hidden@l">Revision Number</strong>&nbsp;
+                                            <?php echo $row['revision_number']; ?>
+                                        </td>
+                                        <td><strong class="hidden@l">Description</strong>&nbsp;
+                                            <?php echo $row['description']; ?>
 
-                                    </td>
-                                    <td data-th="Sector">
-                                        <?php echo $row['sector']; ?>
-                                    </td>
-                                    <td style='display:flex; flex-direction:row;' data-th="">
-                                        <form action="file-view-only.php" method='POST' class="table-forms">
-                                            <input type="hidden" name="filename" value="<?php echo $row['file']; ?>" />
-                                            <button type="submit" class="update_details button" data-modal="modalOne" name="view-pdf">View</button>
-                                        </form>
-                                        <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
-                                            <form action="update-pdf-data.php" method='POST' class="table-forms">
+                                        </td>
+                                        <td><strong class="hidden@l">Sector</strong>&nbsp;
+                                            <?php echo $row['sector']; ?>
+                                        </td>
+                                        <td style='display:flex; flex-direction:row;'>
+                                            <form action="file-view-only.php" method='POST' class="table-forms">
                                                 <input type="hidden" name="filename" value="<?php echo $row['file']; ?>" />
-                                                <button type="submit" class="update_details" name="view-pdf">Edit</button>
+                                                <button type="submit" class="update_details button" data-modal="modalOne" name="view-pdf">View</button>
                                             </form>
-                                            <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method='POST' class="table-forms">
-                                                <input type="hidden" name="delete-pdf" value="<?php echo $row['file']; ?>" />
-                                                <button type="submit" onclick="return confirm('Are you sure you want to Delete?')" class="update_details red" name="delete-pdf-btn">Delete</button>
-                                            </form>
-                                        <?php } ?>
-                                    </td>
-                                </tr>
-                            <?php }
-                        } else { ?>
-                            <tr id='display'>
-
-                            </tr>
-                <?php
+                                            <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
+                                                <form action="update-pdf-data.php" method='POST' class="table-forms">
+                                                    <input type="hidden" name="filename" value="<?php echo $row['file']; ?>" />
+                                                    <button type="submit" class="update_details" name="view-pdf">Edit</button>
+                                                </form>
+                                            <?php } ?>
+                                        </td>
+                                        <td>
+                                            <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
+                                                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method='POST' class="table-forms">
+                                                    <input type="hidden" name="delete-pdf" value="<?php echo $row['file']; ?>" />
+                                                    <button type="submit" onclick="return confirm('Are you sure you want to Delete?')" class="update_details red" name="delete-pdf-btn">Delete</button>
+                                                </form> <?php } ?>
+                                        </td>
+                                    </tr>
+                    <?php }
+                            }
                         }
-                    }
-                } ?>
-            </tbody>
-        </table>
+                    } ?>
+                </tbody>
+            </table>
+        </section>
     </section>
 </body>
 <script src="./js/nav.js"></script>

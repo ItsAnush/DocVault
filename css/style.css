@@ -540,141 +540,9 @@ textarea {
     background-color: #ff3f3f;
 }
 
-.rwd-table {
-    margin: auto;
-    min-width: 300px;
-    max-width: 100%;
-    border-collapse: collapse;
-    box-shadow: 2px 5px 20px rgba(119, 119, 119, 0.5);
-    margin-bottom: 5vh;
-}
-
-.rwd-table tr:first-child {
-    border-top: none;
-    background: #0c48dbdb;
-    color: #fff;
-}
-
-.rwd-table tr {
-    border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-    background-color: #f5f9fc;
-}
-
-.rwd-table th {
-    display: none;
-    border: none;
-}
-
-.rwd-table td {
-    display: block;
-    border: none;
-}
-
-.rwd-table td:first-child {
-    margin-top: .5em;
-}
-
-.rwd-table td:last-child {
-    margin-bottom: .5em;
-}
-
-.rwd-table td:before {
-    content: attr(data-th) " ";
-    font-weight: 500;
-    width: 120px;
-    display: inline-block;
-    color: #000;
-}
-
-.rwd-table th,
-.rwd-table td {
-    text-align: left;
-}
-
-.rwd-table {
-    color: #747474;
-    border-radius: .4em;
-    overflow: hidden;
-}
-
-.rwd-table tr {
-    border-color: #bfbfbf;
-}
-
-.rwd-table th,
-.rwd-table td {
-    padding: .5em 1em;
-}
-
-@media screen and (max-width: 601px) {
-    .rwd-table tr:nth-child(2) {
-        border-top: none;
-    }
-}
-
 @media screen and (max-width: 1075px) {
     .userlist {
         padding-top: 10vh;
-    }
-}
-
-@media screen and (min-width: 920px) {
-    .rwd-table tr:hover:not(:first-child) {
-        background-color: #f5f9fc;
-    }
-    .rwd-table td:before {
-        display: none;
-    }
-    .rwd-table th,
-    .rwd-table td {
-        display: table-cell;
-        padding: .25em .5em;
-    }
-    .rwd-table th:first-child,
-    .rwd-table td:first-child {
-        padding-left: 0;
-    }
-    .rwd-table th:last-child,
-    .rwd-table td:last-child {
-        padding-right: 0;
-    }
-    .rwd-table th,
-    .rwd-table td {
-        padding: 1em !important;
-    }
-}
-
-
-/* THE END OF THE IMPORTANT STUFF */
-
-@-webkit-keyframes leftRight {
-    0% {
-        -webkit-transform: translateX(0)
-    }
-    25% {
-        -webkit-transform: translateX(-10px)
-    }
-    75% {
-        -webkit-transform: translateX(10px)
-    }
-    100% {
-        -webkit-transform: translateX(0)
-    }
-}
-
-@keyframes leftRight {
-    0% {
-        transform: translateX(0)
-    }
-    25% {
-        transform: translateX(-10px)
-    }
-    75% {
-        transform: translateX(10px)
-    }
-    100% {
-        transform: translateX(0)
     }
 }
 
@@ -685,6 +553,7 @@ textarea {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    margin-bottom: 0;
 }
 
 .search-bar {
@@ -838,5 +707,117 @@ a {
     }
     .pdflist {
         padding-top: 10vh;
+    }
+}
+
+:root {
+    --white: #fff;
+    --black: #333;
+    --darkblue: #0c48dbdb;
+    --lightblue: #edf2f4;
+    --table-border: #dde7ea;
+}
+
+.container {
+    max-width: 1200px;
+    padding: 0 15px;
+    margin: 0 auto;
+    min-width: fit-content;
+}
+
+
+/* TABLE STYLES
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+table {
+    margin: auto;
+    text-align: left;
+    border-collapse: collapse;
+    border: 1px solid var(--table-border);
+    font-size: 14px;
+}
+
+table th {
+    color: var(--white);
+    background: var(--darkblue);
+    padding: 20px;
+}
+
+table td {
+    width: 100%;
+    padding: 10px;
+}
+
+table td:first-child {
+    position: relative;
+    padding-right: 60px;
+}
+
+table td:nth-child(2) {
+    position: relative;
+}
+
+table tbody tr {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    counter-increment: counter;
+}
+
+table tbody tr {
+    background: #f5f9fc;
+}
+
+
+/* MQ STYLES
+–––––––––––––––––––––––––––––––––––––––––––––––––– */
+
+@media (max-width: 999px) {
+    .visible\@l {
+        display: none;
+    }
+}
+
+@media (min-width: 700px) {
+    table td {
+        padding: 20px;
+    }
+}
+
+@media (min-width: 1000px) {
+    .hidden\@l {
+        display: none;
+    }
+    .container {
+        padding: 0 30px;
+    }
+    table {
+        border: none;
+    }
+    table th,
+    table td {
+        width: fit-content;
+        max-width: 95vw;
+    }
+    table td:first-child {
+        padding-right: 0;
+    }
+    table tbody tr {
+        display: table-row;
+    }
+    table tbody tr::before {
+        display: none;
+    }
+}
+
+@media (hover: hover) and (min-width: 1000px) {
+    table tbody tr:hover {
+        cursor: pointer;
+    }
+}
+
+@media (min-width: 1250px) {
+    table td:first-child::before {
+        right: calc(100% + 20px);
     }
 }

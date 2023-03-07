@@ -49,79 +49,6 @@ $admin = trim($row['designation']);
         border-radius: 4px;
         margin-left: 2vw;
     }
-
-    @media screen and (max-width: 1075px) {
-        .userlist {
-            padding-top: 10vh;
-        }
-
-        .rwd-table {
-            margin: auto;
-            min-width: 300px;
-            max-width: 100%;
-            border-collapse: collapse;
-            box-shadow: 2px 5px 20px rgba(119, 119, 119, 0.5);
-            margin-bottom: 5vh;
-        }
-
-        .rwd-table tr:first-child {
-            border-top: none;
-            background: #0c48dbdb;
-            color: #fff;
-        }
-
-        .rwd-table tr {
-            border-top: 1px solid #ddd;
-            border-bottom: 1px solid #ddd;
-            background-color: #f5f9fc;
-        }
-
-        .rwd-table th {
-            display: none;
-            border: none;
-        }
-
-        .rwd-table td {
-            display: block;
-            border: none;
-        }
-
-        .rwd-table td:first-child {
-            margin-top: .5em;
-        }
-
-        .rwd-table td:last-child {
-            margin-bottom: .5em;
-        }
-
-        .rwd-table td:before {
-            content: attr(data-th) " ";
-            font-weight: 500;
-            width: 120px;
-            display: inline-block;
-            color: #000;
-        }
-
-        .rwd-table th,
-        .rwd-table td {
-            text-align: left;
-        }
-
-        .rwd-table {
-            color: #5a5a5a;
-            border-radius: .4em;
-            overflow: hidden;
-        }
-
-        .rwd-table tr {
-            border-color: #bfbfbf;
-        }
-
-        .rwd-table th,
-        .rwd-table td {
-            padding: .5em 1em;
-        }
-    }
 </style>
 
 <body>
@@ -160,132 +87,137 @@ $admin = trim($row['designation']);
                     <a class="add_user_button" href="register.php">Add User</a>
                 </center>
             </div>
-            <table class="rwd-table">
-                <tbody>
-                    <tr>
-                        <th>S.No</th>
-                        <th>Email ID</th>
-                        <th>Name</th>
-                        <th>Sector</th>
-                        <th>Phone Number</th>
-                        <th>Designation</th>
-                        <th> </th>
-                    </tr>
-                    <?php
-                    if (isset($_POST['filter'])) {
-                        $value_filter = $_POST['filter-value'];
-                        if (trim($admin) == 'Admin') {
-                            $search_sql = "SELECT * from users where CONCAT(username, name, sector, phone_number, designation) LIKE '%$value_filter%' and username != '$username' and designation NOT LIKE '%SuperAdmin%' and designation NOT LIKE '%Admin'";
-                        } else {
-                            $search_sql = "SELECT * from users where CONCAT(username, name, sector, phone_number, designation) LIKE '%$value_filter%' and username != '$username' and designation NOT LIKE '%SuperAdmin%'";
-                        }
-                        $search_result = mysqli_query($link, $search_sql);
-                        if (mysqli_num_rows($search_result) > 0) {
-                            $s_no = 1;
-                            while ($search_row = mysqli_fetch_assoc($search_result)) {
-                                $search_username = $search_row['username'];
-                                $sector_sql = "SELECT * FROM `sectors` WHERE username = '$search_username'";
-                                $sector_result = mysqli_query($link, $sector_sql);
-                                $multi_sector = '';
-                                while ($sector_row = mysqli_fetch_assoc($sector_result)) {
-                                    $multi_sector = $multi_sector . $sector_row['sector'] . ' , ';
-                                }
-                    ?>
-                                <tr id='display'>
-                                    <td data-th="S.No">
-                                        <?php echo $s_no;
-                                        $s_no += 1; ?>
-                                    </td>
-                                    <td data-th="Email ID">
-                                        <?php echo $search_row['username']; ?>
-                                    </td>
-                                    <td data-th="Name">
-                                        <?php echo $search_row['name']; ?>
-                                    </td>
-                                    <td data-th="Sector">
-                                        <?php echo rtrim($multi_sector, ", "); ?>
+            <section class="container">
+                <table>
+                    <thead class="visible@l">
+                        <tr>
+                            <th>S.No</th>
+                            <th>Email ID</th>
+                            <th>Name</th>
+                            <th>Sector</th>
+                            <th>Phone Number</th>
+                            <th>Designation</th>
+                            <th> </th>
+                        </tr>
+                    </thead>
+                    <tbody>
 
-                                    </td>
-                                    <td data-th="Phone Number">
-                                        <?php echo $search_row['phone_number']; ?>
-                                    </td>
-                                    <td data-th="Designation">
-                                        <?php echo $search_row['designation']; ?>
-                                    </td>
-                                    <td data-th="">
-                                        <form action="update-details.php" method='POST' class="table-forms">
-                                            <input style="cursor: pointer;" type="hidden" name="userid" value="<?php echo $search_row['username']; ?>" />
-                                            <button type="submit" class="update_details" data-modal="modalOne" name="update_details">View</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            <?php
+                        <?php
+                        if (isset($_POST['filter'])) {
+                            $value_filter = $_POST['filter-value'];
+                            if (trim($admin) == 'Admin') {
+                                $search_sql = "SELECT * from users where CONCAT(username, name, sector, phone_number, designation) LIKE '%$value_filter%' and username != '$username' and designation NOT LIKE '%SuperAdmin%' and designation NOT LIKE '%Admin'";
+                            } else {
+                                $search_sql = "SELECT * from users where CONCAT(username, name, sector, phone_number, designation) LIKE '%$value_filter%' and username != '$username' and designation NOT LIKE '%SuperAdmin%'";
                             }
-                        } else { ?>
-                            <tr id='display'>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td>
-                                    <p>No Record Found</p>
-                                </td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <?php
-                        }
-                    }
-                    if (isset($_POST['filter']) == false) {
-                        if (trim($admin) == 'SuperAdmin') {
-                            $sql = "SELECT * FROM users WHERE username != '$username'  and designation != 'SuperAdmin' ORDER BY id DESC";
-                        } else {
-                            $sql = "SELECT * FROM users WHERE username != '$username'  and designation != 'SuperAdmin' and designation != 'Admin' ORDER BY id DESC";
-                        }
-                        $result = mysqli_query($link, $sql);
-                        if (mysqli_num_rows($result) > 0) {
-                            $s_no = 1;
-                            while ($row = mysqli_fetch_assoc($result)) {
-                                $search_username = $row['username'];
-                                $sector_sql = "SELECT * FROM `sectors` WHERE username = '$search_username'";
-                                $sector_result = mysqli_query($link, $sector_sql);
-                                $multi_sector = '';
-                                while ($sector_row = mysqli_fetch_assoc($sector_result)) {
-                                    $multi_sector = $multi_sector . $sector_row['sector'] . ' , ';
-                                } ?>
-                                <tr id='display'>
-                                    <td data-th="S.No">
-                                        <?php echo $s_no;
-                                        $s_no += 1; ?>
-                                    </td>
-                                    <td data-th="Email ID">
-                                        <?php echo $row['username']; ?>
-                                    </td>
-                                    <td data-th="Name">
-                                        <?php echo $row['name']; ?>
-                                    </td>
-                                    <td data-th="Sector">
-                                        <?php echo rtrim($multi_sector, ", "); ?>
+                            $search_result = mysqli_query($link, $search_sql);
+                            if (mysqli_num_rows($search_result) > 0) {
+                                $s_no = 1;
+                                while ($search_row = mysqli_fetch_assoc($search_result)) {
+                                    $search_username = $search_row['username'];
+                                    $sector_sql = "SELECT * FROM `sectors` WHERE username = '$search_username'";
+                                    $sector_result = mysqli_query($link, $sector_sql);
+                                    $multi_sector = '';
+                                    while ($sector_row = mysqli_fetch_assoc($sector_result)) {
+                                        $multi_sector = $multi_sector . $sector_row['sector'] . ' , ';
+                                    }
+                        ?>
+                                    <tr id='display'>
+                                        <td><strong class="hidden@l">S.no</strong>&nbsp;
+                                            <?php echo $s_no;
+                                            $s_no += 1; ?>
+                                        </td>
+                                        <td><strong class="hidden@l">Email ID</strong>&nbsp;
+                                            <?php echo $search_row['username']; ?>
+                                        </td>
+                                        <td><strong class="hidden@l">Name</strong>&nbsp;
+                                            <?php echo $search_row['name']; ?>
+                                        </td>
+                                        <td><strong class="hidden@l">Sector</strong>&nbsp;
+                                            <?php echo rtrim($multi_sector, ", "); ?>
 
+                                        </td>
+                                        <td><strong class="hidden@l">Phone Number</strong>&nbsp;
+                                            <?php echo $search_row['phone_number']; ?>
+                                        </td>
+                                        <td><strong class="hidden@l">Designation</strong>&nbsp;
+                                            <?php echo $search_row['designation']; ?>
+                                        </td>
+                                        <td>
+                                            <form action="update-details.php" method='POST' class="table-forms">
+                                                <input style="cursor: pointer;" type="hidden" name="userid" value="<?php echo $search_row['username']; ?>" />
+                                                <button type="submit" class="update_details" data-modal="modalOne" name="update_details">View</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                <?php
+                                }
+                            } else { ?>
+                                <tr id='display'>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>
+                                        <p>No Record Found</p>
                                     </td>
-                                    <td data-th="Phone Number">
-                                        <?php echo $row['phone_number']; ?>
-                                    </td>
-                                    <td data-th="Designation">
-                                        <?php echo $row['designation']; ?>
-                                    </td>
-                                    <td data-th="">
-                                        <form action="update-details.php" method='POST' class="table-forms">
-                                            <input type="hidden" name="userid" value="<?php echo $row['username']; ?>" />
-                                            <button type="submit" class="update_details button" data-modal="modalOne" name="update_details">View</button>
-                                        </form>
-                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
                                 </tr>
-                    <?php }
+                                <?php
+                            }
                         }
-                    } ?>
-                </tbody>
-            </table>
+                        if (isset($_POST['filter']) == false) {
+                            if (trim($admin) == 'SuperAdmin') {
+                                $sql = "SELECT * FROM users WHERE username != '$username'  and designation != 'SuperAdmin' ORDER BY id DESC";
+                            } else {
+                                $sql = "SELECT * FROM users WHERE username != '$username'  and designation != 'SuperAdmin' and designation != 'Admin' ORDER BY id DESC";
+                            }
+                            $result = mysqli_query($link, $sql);
+                            if (mysqli_num_rows($result) > 0) {
+                                $s_no = 1;
+                                while ($row = mysqli_fetch_assoc($result)) {
+                                    $search_username = $row['username'];
+                                    $sector_sql = "SELECT * FROM `sectors` WHERE username = '$search_username'";
+                                    $sector_result = mysqli_query($link, $sector_sql);
+                                    $multi_sector = '';
+                                    while ($sector_row = mysqli_fetch_assoc($sector_result)) {
+                                        $multi_sector = $multi_sector . $sector_row['sector'] . ' , ';
+                                    } ?>
+                                    <tr id='display'>
+                                        <td><strong class="hidden@l">S.no</strong>&nbsp;
+                                            <?php echo $s_no;
+                                            $s_no += 1; ?>
+                                        </td>
+                                        <td><strong class="hidden@l">Email ID</strong>&nbsp;
+                                            <?php echo $row['username']; ?>
+                                        </td>
+                                        <td><strong class="hidden@l">Name</strong>&nbsp;
+                                            <?php echo $row['name']; ?>
+                                        </td>
+                                        <td><strong class="hidden@l">Sector</strong>&nbsp;
+                                            <?php echo rtrim($multi_sector, ", "); ?>
+
+                                        </td>
+                                        <td><strong class="hidden@l">Phone Number</strong>&nbsp;
+                                            <?php echo $row['phone_number']; ?>
+                                        </td>
+                                        <td><strong class="hidden@l">Designation</strong>&nbsp;
+                                            <?php echo $row['designation']; ?>
+                                        </td>
+                                        <td data-th="">
+                                            <form action="update-details.php" method='POST' class="table-forms">
+                                                <input type="hidden" name="userid" value="<?php echo $row['username']; ?>" />
+                                                <button type="submit" class="update_details button" data-modal="modalOne" name="update_details">View</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                        <?php }
+                            }
+                        } ?>
+                    </tbody>
+                </table>
+            </section>
         </section>
     <?php } ?>
 </body>
