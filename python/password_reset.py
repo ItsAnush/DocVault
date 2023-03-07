@@ -12,8 +12,7 @@ OTP = ""
 for i in range(6) :
     OTP += digits[math.floor(random.random() * 10)]
 OTP = OTP
-#email = sys.argv[1]
-email = 'kavinkumar.cs21@bitsathy.ac.in'
+email = sys.argv[1]
 print(email)
 
 mydb = mysql.connector.connect(
@@ -34,7 +33,7 @@ mydb.commit()
 
 server = smtplib.SMTP('smtp.gmail.com',587)
 server.starttls()
-server.login('kavin.apm2003@gmail.com','dfdahixvgdpleels') #should be changed
+server.login('mail_id','secret_key') #should be changed
 message = '''Subject: Password Reset for Whale Login - Regarding
 
 Dear User,
@@ -52,4 +51,4 @@ Tamilnadu
 India
 Telephone: +91 9566555628
 '''.format(OTP)
-server.sendmail('kavin.apm2003@gmail.com',email,message) #should be changes
+server.sendmail('mail_id',email,message) #should be changes
