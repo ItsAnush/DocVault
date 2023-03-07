@@ -34,7 +34,7 @@ mydb.commit()
 
 server = smtplib.SMTP('smtp.gmail.com',587)
 server.starttls()
-server.login('kavin.apm2003@gmail.com','pnmqteqfopbjoqxn') #should be changed
+server.login('kavin.apm2003@gmail.com','dfdahixvgdpleels') #should be changed
 message = '''Subject: Password Reset for Whale Login - Regarding
 
 Dear User,

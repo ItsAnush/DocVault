@@ -97,7 +97,7 @@ $sector_filter = $_POST['sector'];
     body {
         position: relative;
     }
-
+    
     body::after {
         content: "<?php echo $username ?>";
         font-size: 5em;
