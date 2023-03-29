@@ -3,7 +3,6 @@ import sys
 import random
 import math
 import mysql.connector
-import time
 
 digits = "0123456789"
 OTP = ""
