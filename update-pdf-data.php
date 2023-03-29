@@ -18,88 +18,6 @@ $file_name = $_POST["filename"];
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-
-    if (isset($_POST['delete-pdf-btn'])) {
-        $file_name = $_POST['delete-pdf'];
-        #echo $filename;
-        $path = "./uploads/";
-        $file = $path . $file_name;
-        #echo $file;
-        $status = unlink($file);
-        if ($status) {
-            #echo "File deleted successfully";
-            $sql = "DELETE from software_model WHERE file = '$file_name'";
-            #echo $sql;
-            if (mysqli_query($link, $sql)) {
-                setcookie("delete_status", "Successfully removed the file : $file_name", time() + (7), "/");
-                #echo "<center><p style='color:green';>Successfully Removed the File.</p></center>";
-            } else {
-                setcookie("delete_status", "Failed to remove the file : $file_name.", time() + (7), "/");
-                #echo "<center><p style='color:red';>Failed to remove the file</p></center>";
-            }
-        } else {
-            #echo "Sorry!";
-        }
-        header('Location: view-only.php', true, 303);
-        exit();
-    } else if (isset($_POST['update-pdf-details'])) {
-        $d_no = $_POST['drawing_number'];
-        $r_no = $_POST['revision_number'];
-        $desc = $_POST['description'];
-        $id = $_POST['id'];
-        $sector = $_POST['sector'];
-        $check_file_sql = "SELECT * FROM `software_model` WHERE id = '$id' and sector = '$sector'";
-        echo $check_file_sql;
-        echo "<br/>";
-        $check_file_result = mysqli_query($link, $check_file_sql);
-        $unique_name = $unique_id . $pname;
-        if (mysqli_num_rows($check_file_result) > 0) {
-            $sql = "SELECT * FROM `software_model` WHERE drawing_number = '$d_no' and `sector` = '$sector' and id != '$id'";
-            $result = mysqli_query($link, $sql);
-            $row = mysqli_fetch_assoc($result);
-            if (mysqli_num_rows($result) > 0) {
-                $sql = "DELETE FROM `software_model` WHERE id = '" . $row['id'] . "' and `sector` = '$sector'";
-                echo $sql;
-                echo "<br/>";
-                mysqli_query($link, $sql);
-                $uploads_dir = 'uploads';
-                $file_path_name = $row['file'];
-                $file_path = $uploads_dir . '/' . $file_path_name; // Replace with the actual file path
-                #echo $file_path;
-                if (file_exists($file_path)) {
-                    if (unlink($file_path)) {
-                        #echo "File deleted successfully.";
-                    } else {
-                        #echo "Unable to delete the file.";
-                    }
-                } else {
-                    #echo "File not found.";
-                    #echo "<br/>";
-                }
-            }
-            $sql = "UPDATE `software_model` SET  drawing_number = '$d_no' WHERE id = '$id'";
-            mysqli_query($link, $sql);
-            echo $sql;
-            echo "<br/>";
-            $sql = "UPDATE `software_model` SET  revision_number = '$r_no' WHERE id = '$id'";
-            mysqli_query($link, $sql);
-            echo $sql;
-            echo "<br/>";
-            $sql = "UPDATE `software_model` SET  `description` = '$desc' WHERE id = '$id'";
-            echo $sql;
-            echo "<br/>";
-            if (mysqli_query($link, $sql)) {
-                setcookie("status", "Successfully Updated!", time() + (7), "/");
-                #echo "<center><p style='color:green';>Successfully Updated!</p></center>";
-            } else {
-                setcookie("status", "Update Failed!", time() + (7), "/");
-                #echo "<center><p style='color:red';>Update Failed!</p></center>";
-            }
-        } else {
-            setcookie("status", "No file found!", time() + (7), "/");
-        }
-        header('Location: view-only.php');
-    }
 }
 ?>
 
@@ -244,7 +162,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="rightbox">
                     <div class="profile">
                         <h1>Update Details of <?php echo $row['drawing_number'] ?></h1>
-                        <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                        <form action="action.php" method="post">
                             <label>Drawing Number</label>
                             <input type="text" class="form-control" name="drawing_number" placeholder="Enter Drawing Name" value="<?php echo $row['drawing_number'] ?>" required><br />
                             <label>Revision Number</label>
@@ -287,5 +205,61 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     var autoBlur = false;
 </script>
 <script type="text/javascript" src="https://pdfanticopy.com/noprint.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<script>
+    const form = document.querySelector('#myForm'); // replace 'myForm' with the ID of your form
+    const dropdown = document.querySelector('.select-dropdown');
+    const header = dropdown.querySelector('.select-dropdown__header');
+    const toggle = header.querySelector('.select-dropdown__toggle');
+    const options = dropdown.querySelector('.select-dropdown__options');
+    const checkboxes = options.querySelectorAll('input[type="checkbox"]');
+
+    function toggleOptions() {
+        options.style.display = options.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function handleCheckboxChange() {
+        const selectedOptions = Array.from(checkboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.value);
+
+        // remove previously added hidden input fields
+        form.querySelectorAll('input[type="hidden"]').forEach(hiddenInput => {
+            hiddenInput.parentNode.removeChild(hiddenInput);
+        });
+
+        // create new hidden input fields with the selected values and append to the form
+        selectedOptions.forEach(option => {
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'selectedOptions[]'; // add [] to the name to pass the values as an array
+            hiddenInput.value = option;
+            form.appendChild(hiddenInput);
+        });
+    }
+
+    header.addEventListener('click', toggleOptions);
+    checkboxes.forEach(checkbox => checkbox.addEventListener('change', handleCheckboxChange));
+
+    form.addEventListener('submit', (event) => {
+        // submit the form using POST method
+        const formData = new FormData(form);
+        const selectedOptions = formData.getAll('selectedOptions[]');
+        if (selectedOptions.length > 0) {
+            // prevent the form from submitting normally if there are selected options
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            }).then(response => {
+                console.log(response);
+                // handle the response as needed
+            }).catch(error => {
+                console.error(error);
+                // handle the error as needed
+            });
+        }
+    });
+</script>
 
 </html>

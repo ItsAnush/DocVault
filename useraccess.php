@@ -135,7 +135,6 @@ $admin = trim($row['designation']);
                                         </td>
                                         <td><strong class="hidden@l">Sector</strong>&nbsp;
                                             <?php echo rtrim($multi_sector, ", "); ?>
-
                                         </td>
                                         <td><strong class="hidden@l">Phone Number</strong>&nbsp;
                                             <?php echo $search_row['phone_number']; ?>

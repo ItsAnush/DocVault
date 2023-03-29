@@ -348,11 +348,12 @@ nav {
         justify-content: center
     }
     .modal-content {
-        margin: 50px auto;
+        margin:auto;
         min-width: 90%;
+        margin-top: 0;
+        margin-bottom: 50px;
     }
 }
-
 
 /*Pop up form*/
 

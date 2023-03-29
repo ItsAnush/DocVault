@@ -68,6 +68,8 @@ $sector_filter = $_POST['sector'];
 
     #element {
         display: block;
+        max-width: 100vw;
+        overflow-x: scroll;
     }
 
     #canvas_container {
@@ -96,8 +98,9 @@ $sector_filter = $_POST['sector'];
 
     body {
         position: relative;
+
     }
-    
+
     body::after {
         content: "<?php echo $username ?>";
         font-size: 5em;
@@ -109,7 +112,7 @@ $sector_filter = $_POST['sector'];
         transform: translate(-50%, -50%) rotate(-45deg);
         pointer-events: none;
         z-index: 2;
-        opacity: 0.2;
+        opacity: 0.4;
     }
 
     @media screen and (max-width: 960px) {
@@ -117,6 +120,13 @@ $sector_filter = $_POST['sector'];
             top: 65%;
             font-size: 2em;
         }
+    }
+
+    #pdf_renderer {
+        max-width: fit-content;
+        height: auto;
+        display: block;
+        margin: 0 auto;
     }
 </style>
 
@@ -186,7 +196,13 @@ $sector_filter = $_POST['sector'];
                     <p>Description: &nbsp; </p>
                     <p class="view-pdf-overall-db-content"><?php echo $row['description'] ?></p>
                 </div>
+                <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
+                    <div class="flex-row">
+                        <p>Inserted By: &nbsp; </p>
+                        <p class="view-pdf-overall-db-content"><?php echo $row['inserted_user'] ?></p>
+                    </div>
         <?php }
+            }
         } ?>
         <div id="my_pdf_viewer">
             <div id="canvas_container">
@@ -199,6 +215,7 @@ $sector_filter = $_POST['sector'];
                     <button id="zoom_in">Zoom In</button>
                     <button id="zoom_out">Zoom Out</button>
                 </div>
+                <button id="reset_pan">Reset Pan</button>
                 <input id="current_page" value="1" type="hidden" />
             </div>
         </div>
@@ -345,25 +362,28 @@ $sector_filter = $_POST['sector'];
     var myState = {
         pdf: null,
         currentPage: 1,
-        zoom: 1.2
+        zoom: 1.2,
+        panX: 0,
+        panY: 0
     }
 
     pdfjsLib.getDocument('<?php echo $file ?>').then((pdf) => {
-
         myState.pdf = pdf;
         render();
-
     });
 
     function render() {
         myState.pdf.getPage(myState.currentPage).then((page) => {
-
             var canvas = document.getElementById("pdf_renderer");
             var ctx = canvas.getContext('2d');
 
             var viewport = page.getViewport(myState.zoom);
             canvas.width = viewport.width;
             canvas.height = viewport.height;
+
+            // Translate canvas by the panning values
+            ctx.translate(myState.panX, myState.panY);
+
             page.render({
                 canvasContext: ctx,
                 viewport: viewport
@@ -371,56 +391,97 @@ $sector_filter = $_POST['sector'];
         });
     }
 
-    document.getElementById('go_previous')
-        .addEventListener('click', (e) => {
-            if (myState.pdf == null || myState.currentPage == 1)
-                return;
+    document.getElementById('go_previous').addEventListener('click', (e) => {
+        if (myState.pdf == null || myState.currentPage == 1) return;
+        myState.currentPage -= 1;
+        document.getElementById("current_page").value = myState.currentPage;
+        render();
+    });
 
-            myState.currentPage -= 1;
-            document.getElementById("current_page").value = myState.currentPage;
-            render();
-        });
-    document.getElementById('go_next')
-        .addEventListener('click', (e) => {
-            if (myState.pdf == null || myState.currentPage > myState.pdf._pdfInfo.numPages)
-                return;
+    document.getElementById('go_next').addEventListener('click', (e) => {
+        if (myState.pdf == null || myState.currentPage > myState.pdf._pdfInfo.numPages) return;
+        myState.currentPage += 1;
+        document.getElementById("current_page").value = myState.currentPage;
+        render();
+    });
 
-            myState.currentPage += 1;
-            document.getElementById("current_page").value = myState.currentPage;
-            render();
-        });
-    document.getElementById('current_page')
-        .addEventListener('keypress', (e) => {
-            if (myState.pdf == null) return;
+    document.getElementById('current_page').addEventListener('keypress', (e) => {
+        if (myState.pdf == null) return;
 
-            // Get key code
-            var code = (e.keyCode ? e.keyCode : e.which);
+        // Get key code
+        var code = (e.keyCode ? e.keyCode : e.which);
 
-            // If key code matches that of the Enter key
-            if (code == 13) {
-                var desiredPage = document.getElementById('current_page').valueAsNumber;
+        // If key code matches that of the Enter key
+        if (code == 13) {
+            var desiredPage = document.getElementById('current_page').valueAsNumber;
 
-                if (desiredPage >= 1 && desiredPage <= myState.pdf._pdfInfo.numPages) {
-                    myState.currentPage = desiredPage;
-                    document.getElementById("current_page").value = desiredPage;
-                    render();
-                }
+            if (desiredPage >= 1 && desiredPage <= myState.pdf._pdfInfo.numPages) {
+                myState.currentPage = desiredPage;
+                document.getElementById("current_page").value = desiredPage;
+                render();
             }
-        });
-    document.getElementById('zoom_in')
-        .addEventListener('click', (e) => {
-            if (myState.pdf == null) return;
-            myState.zoom += 0.5;
-            render();
-        });
-    document.getElementById('zoom_out')
-        .addEventListener('click', (e) => {
-            if (myState.pdf == null) return;
-            myState.zoom -= 0.5;
+        }
+    });
 
+    document.getElementById('zoom_in').addEventListener('click', (e) => {
+        if (myState.pdf == null) return;
+        myState.zoom += 0.1;
+        render();
+    });
+
+    document.getElementById('zoom_out').addEventListener('click', (e) => {
+        if (myState.pdf == null) return;
+        myState.zoom -= 0.1;
+        render();
+    });
+
+    var canvas = document.getElementById('pdf_renderer');
+    var isDragging = false;
+    var lastX, lastY;
+
+    canvas.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        lastX = e.offsetX || (e.pageX - canvas.offsetLeft);
+        lastY = e.offsetY || (e.pageY - canvas.offsetTop);
+    });
+
+    canvas.addEventListener('mousemove', function(e) {
+        if (isDragging) {
+            var currentX = e.offsetX || (e.pageX - canvas.offsetLeft);
+            var currentY = e.offsetY || (e.pageY - canvas.offsetTop);
+
+            // Calculate the distance moved
+            var distanceX = currentX - lastX;
+            var distanceY = currentY - lastY;
+
+            // Update the panning values
+            myState.panX += distanceX;
+            myState.panY += distanceY;
+
+            // Render the page with the updated panning values
             render();
-        });
+
+            lastX = currentX;
+            lastY = currentY;
+        }
+    });
+
+    canvas.addEventListener('mouseup', function(e) {
+        isDragging = false;
+    });
+
+    canvas.addEventListener('mouseleave', function(e) {
+        isDragging = false;
+    });
+
+    document.getElementById('reset_pan').addEventListener('click', (e) => {
+        if (myState.pdf == null) return;
+        myState.panX = 0;
+        myState.panY = 0;
+        render();
+    });
 </script>
+
 
 
 

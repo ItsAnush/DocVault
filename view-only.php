@@ -83,6 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css'>
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script type="text/javascript" src="./js/script.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
 </head>
 <style>
     body {
@@ -91,6 +92,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     .container {
         min-width: fit-content;
+    }
+
+    .add_user_button {
+        height: fit-content;
+        border: 0px;
+        cursor: pointer;
     }
 </style>
 
@@ -138,12 +145,65 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <?php } ?>
     <section class="pdflist">
         <h1>View the Documents </h1>
-        <div class="search-box">
+        <div class="search-box mobile-view">
             <form class="search-box" action="" method="post">
                 <input class="search-bar" type="text" name="filter-value" placeholder="Search Here!" />
                 <button name="filter" class="search_details">Search</button>
             </form>
+            <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
+                <center style="margin-top: .8vh;">
+                    <button class="add_user_button" onclick="ExportToExcel('xlsx')">Download</button>
+                </center>
+            <?php } ?>
         </div>
+        <?php
+        $sector_sql = "SELECT * FROM `sectors` WHERE username = '$username'";
+        $sector_result = mysqli_query($link, $sector_sql);
+        $multi_sector = array();
+        while ($sector_row = mysqli_fetch_assoc($sector_result)) {
+            array_push($multi_sector, $sector_row['sector']);
+        }
+        $length = count($multi_sector);
+        ?>
+        <table style='display:none;' id="tbl_exporttable_to_xls" border="1">
+            <thead>
+                <th>Drawing Number</th>
+                <th>Revision Number</th>
+                <th>Description</th>
+                <th>Sector</th>
+                <th>Inserted User</th>
+                <th>Last Updated</th>
+            </thead>
+            <tbody>
+                <?php for ($i = 0; $i < $length; $i++) {
+                    $sql = "SELECT * FROM software_model WHERE sector = '$multi_sector[$i]'";
+                    $result = mysqli_query($link, $sql);
+                    unset($multi_sector[$i]);
+                    if (mysqli_num_rows($result) > 0) {
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            $sqllll = "SELECT * FROM software_model WHERE drawing_number = '" . $row['drawing_number'] . "'";
+                ?>
+                            <tr>
+                                <td><?php echo $row['drawing_number'] ?></td>
+                                <td><?php echo $row['revision_number'] ?></td>
+                                <td><?php echo $row['description'] ?></td>
+                                <td>
+                                    <?php
+                                    if ($resultttt = mysqli_query($link, $sqllll)) {
+                                        while ($rowwww = mysqli_fetch_assoc($resultttt)) {
+                                            echo $rowwww['sector'];
+                                        }
+                                    }
+                                    ?>
+                                </td>
+                                <td><?php echo $row['inserted_user'] ?></td>
+                                <td><?php echo $row['last_rev_date'] ?></td>
+                            </tr>
+                <?php }
+                    }
+                } ?>
+            </tbody>
+        </table>
         <?php
         if (isset($_COOKIE['status'])) {
             printf("<center><p style='color:green;'>" . $_COOKIE['status'] . "</p></center>");
@@ -151,7 +211,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         ?><section class="container">
             <table>
                 <thead class="visible@l">
-
                     <tr>
                         <th>S.No</th>
                         <th>Drawing Number</th>
@@ -202,7 +261,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         </td>
                                         <td><strong class="hidden@l">Description</strong>&nbsp;
                                             <?php echo $search_row['description']; ?>
-                                        </td>
+                                        </td>   
                                         <td><strong class="hidden@l">Sector</strong>&nbsp;
                                             <?php echo $search_row['sector']; ?>
                                         </td>
@@ -307,6 +366,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     var noCopy = true;
     var noScreenshot = true;
     var autoBlur = false;
+    const now = new Date();
+    const dd = String(now.getDate()).padStart(2, '0');
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const yyyy = now.getFullYear();
+    const H = String(now.getHours()).padStart(2, '0');
+    const M = String(now.getMinutes()).padStart(2, '0');
+    const S = String(now.getSeconds()).padStart(2, '0');
+    const timestamp = `${dd}-${mm}-${yyyy} ${H}:${M}:${S}`;
+
+    function ExportToExcel(type, fn, dl) {
+        var elt = document.getElementById('tbl_exporttable_to_xls');
+        var wb = XLSX.utils.table_to_book(elt, {
+            sheet: "sheet1"
+        });
+        return dl ?
+            XLSX.write(wb, {
+                bookType: type,
+                bookSST: true,
+                type: 'base64'
+            }) :
+            XLSX.writeFile(wb, fn || (timestamp + '.' + (type || 'xlsx')));
+    }
 </script>
 <script type="text/javascript" src="https://pdfanticopy.com/noprint.js"></script>
 

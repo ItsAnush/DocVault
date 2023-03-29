@@ -52,4 +52,4 @@ Tamilnadu
 India
 Telephone: +91 9566555628
 '''.format(OTP)
-server.sendmail('kavin.apm2003@gmail.com',email,message) #should be changes
+server.sendmail('kavin.apm2003@gmail.com',email,message) #should be changed

@@ -40,10 +40,9 @@ $personal_number = $row['phone_number'];
         z-index: 8;
         left: 0;
         top: -25vh;
-        width: 100vw;
+        min-width: 100vw !important;
         height: 119vh;
         overflow: hidden;
-        background-color: rgb(0, 0, 0);
         background-color: rgba(0, 0, 0, 0.4);
         color: #171717;
         padding-top: 38vh;
@@ -71,8 +70,8 @@ $personal_number = $row['phone_number'];
             max-width: 80vw;
             margin: auto;
         }
-
     }
+
 
     .select-dropdown {
         position: relative;
@@ -258,7 +257,6 @@ $personal_number = $row['phone_number'];
                                 <input type="text" class="form-control" name="r_no" placeholder="Enter Revision Number" required>
                             </div>
                             <br />
-
                             <div class="form-group">
                                 <input type="text" class="form-control" name="desc" placeholder="Description" required>
                             </div>
@@ -335,6 +333,7 @@ $personal_number = $row['phone_number'];
             x: -250,
         })
     </script>
+    
     <script>
         let modalBtns = [...document.querySelectorAll(".button")];
         modalBtns.forEach(function(btn) {
