@@ -187,12 +187,6 @@ while ($sector_row = mysqli_fetch_assoc($sector_result)) {
                                     <label>
                                         <input type="checkbox" value="Parts">Parts
                                     </label>
-                                    <label>
-                                        <input type="checkbox" value="New Product Development">New Product Development
-                                    </label>
-                                    <label>
-                                        <input type="checkbox" value="Machine Shop">Machine Shop
-                                    </label>
                                 </div>
                             </div>
                             <?php if (trim($admin) == 'SuperAdmin') { ?>

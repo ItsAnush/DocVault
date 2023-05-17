@@ -203,6 +203,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 }
             }
                 ?>
+
                 <div class="settings noshow">
                     <h1 style="margin-bottom: 1vh;">Reset Your Password</h1>
                     <div class="update-details">

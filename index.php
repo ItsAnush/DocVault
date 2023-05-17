@@ -52,6 +52,8 @@ $personal_number = $row['phone_number'];
     .form-input input {
         font-size: 13px;
         font-family: "Roboto", sans-serif !important;
+        border-image: linear-gradient(to right, #0c48db, #ffffff) 0 0 1 0%;
+
     }
 
     .form-group label {
@@ -136,6 +138,92 @@ $personal_number = $row['phone_number'];
         position: absolute;
         left: -47%;
     }
+
+
+    .admin-replace-documents {
+        min-height: 35px;
+        padding: 0 15vw 0 15vw;
+        background-color: #eb6784;
+        color: #fff;
+        border-radius: 5px;
+        border: 0px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 10vh;
+        cursor: pointer;
+        margin-bottom: 5vh;
+    }
+
+    .upload-button-flex {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+    }
+
+    @media only screen and (max-width: 1230px) {
+        .upload-button-flex {
+            flex-direction: column;
+        }
+
+        .admin-replace-documents {
+            margin-top: 0;
+
+        }
+    }
+
+    #popup {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 9999;
+    }
+
+    #popup h2,
+    #popup p {
+        color: #000;
+    }
+
+    #close-popup {
+        color: #000000;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        transition: 0.2s;
+    }
+
+    #close-popup:hover,
+    #close-popup:focus {
+        color: #3f3f3f;
+        text-decoration: none;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    #popup h1 {
+        font-size: 18px;
+        color: #0c48db;
+        font-weight: 200;
+        margin: 5vh 0 5vh 0;
+    }
+
+    .file_choose,
+    #file-chosen {
+        padding: 0.5rem;
+        font-family: sans-serif;
+        border-radius: 0.3rem;
+        cursor: pointer;
+        font-size: 9px !important;
+        letter-spacing: 1px;
+    }
+
+    #file-chosen {
+        font-size: 12px !important;
+    }
 </style>
 
 <body>
@@ -208,36 +296,49 @@ $personal_number = $row['phone_number'];
                             </div>
                         </button>
                     </form>
-                <?php }
-                if (trim($display_sector_row['sector']) == "New Product Development") { ?>
-                    <form action="view-only.php" method="POST">
-                        <input type="hidden" name="sector-3" value="New Product Development">
-                        <button name="npd-btn">
-                            <div class="main violet-border">
-                                <div id="npd" class="out_body"></div>
-                                <p>New Product Development</p>
-                            </div>
-                        </button>
-                    </form>
-                <?php }
-                if (trim($display_sector_row['sector']) == "Machine Shop") { ?>
-                    <form action="view-only.php" method="POST">
-                        <input type="hidden" name="sector-4" value="Machine Shop">
-                        <button name="machine-btn">
-                            <div class="main light-blue-border">
-                                <div id="machine" class="out_body"></div>
-                                <p>Machine Shop</p>
-                            </div>
-                        </button>
-                    </form>
-            <?php
-                }
+            <?php }
             }
             ?>
         </div>
         <?php
         if (trim($admin) != 'User') { ?>
-            <button class="admin-upload-documents button" data-modal="modalOne"><i class="fa fa-upload" aria-hidden="true"></i> &nbsp; Upload New Documents</button>
+            <div class="upload-button-flex">
+                <button class="admin-upload-documents button" data-modal="modalOne"><i class="fa fa-upload" aria-hidden="true"></i> &nbsp; Upload New Documents</button>
+                <button class="admin-replace-documents button" id="open-popup"><i class="fa fa-exchange" aria-hidden="true"></i> &nbsp; Replace Documents</button>
+            </div>
+            <div id="popup">
+                <div style="padding-top:15vh;" class="modal-content">
+                    <div class="contact-form">
+                        <span id="close-popup">&times;</span>
+                        <form action="action.php" method="post" enctype="multipart/form-data">
+                            <h1>Replace Document</h1>
+                            <div class="form-input py-2">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="d_no" placeholder="Enter Drawing Number" required>
+                                </div>
+                                <br />
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="r_no" placeholder="Enter Revision Number" required>
+                                </div>
+                                <br />
+                                <div class="form-group">
+                                    <input type="text" class="form-control" name="desc" placeholder="Description" required>
+                                </div>
+                                <br />
+                                <div class="form-group">
+                                    <input type="file" name="file" class="form-control" title="Upload PDF" id="actual-btn" hidden required />
+                                    <label class="file_choose" for="actual-btn">CHOOSE FILE</label>
+                                    <span id="file-chosen">No file chosen</span>
+                                </div>
+                                <br />
+                                <div style="display:flex;align-items:center; justify-content:center;" class="form-group">
+                                    <input type="submit" class="btnRegister" name="replace_submit" value="Submit">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
         <?php }
         if ($personal_number == null or $personal_name == null) { ?>
             <p style='margin:10vh 0vh 10vh 0vh;font-family:Montserrat;text-align:center; color:red; border-image:none;border:none;'>Kindly fill your details in <a style="font-family: Montserrat;" href='./profile.php'>profile</a></p>
@@ -287,9 +388,9 @@ $personal_number = $row['phone_number'];
                             </div>
                             <br />
                             <div class=" form-group">
-                                <input type="file" name="file" class="form-control" title="Upload PDF" id="actual-btn" hidden required />
-                                <label for="actual-btn">Choose File</label>
-                                <span id="file-chosen">No file chosen</span>
+                                <input type="file" name="file" class="form-control" title="Upload PDF" id="actual_btn" hidden required />
+                                <label for="actual_btn">Choose File</label>
+                                <span id="file_chosen">No file chosen</span>
                             </div>
                             <br />
 
@@ -307,8 +408,6 @@ $personal_number = $row['phone_number'];
         }
         ?>
     </section>
-
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.5.1/ScrollTrigger.min.js"></script>
 
@@ -333,7 +432,6 @@ $personal_number = $row['phone_number'];
             x: -250,
         })
     </script>
-    
     <script>
         let modalBtns = [...document.querySelectorAll(".button")];
         modalBtns.forEach(function(btn) {
@@ -371,7 +469,15 @@ $personal_number = $row['phone_number'];
 
         actualBtn.addEventListener('change', function() {
             fileChosen.textContent = this.files[0].name
-        })
+        });
+
+        const actual_Btn = document.getElementById('actual_btn');
+
+        const file_Chosen = document.getElementById('file_chosen');
+
+        actual_Btn.addEventListener('change', function() {
+            file_Chosen.textContent = this.files[0].name
+        });
     </script>
     <script type="text/javascript" src="https://pdfanticopy.com/noprint.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -427,6 +533,19 @@ $personal_number = $row['phone_number'];
                     // handle the error as needed
                 });
             }
+        });
+    </script>
+    <script>
+        const openPopupBtn = document.getElementById("open-popup");
+        const closePopupBtn = document.getElementById("close-popup");
+        const popup = document.getElementById("popup");
+
+        openPopupBtn.addEventListener("click", () => {
+            popup.style.display = "block";
+        });
+
+        closePopupBtn.addEventListener("click", () => {
+            popup.style.display = "none";
         });
     </script>
 </body>

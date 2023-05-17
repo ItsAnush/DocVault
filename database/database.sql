@@ -98,3 +98,16 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+ALTER TABLE `whale_enterprises`.`software_model` 
+CHANGE COLUMN `drawing_number` `drawing_number` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NOT NULL ,
+CHANGE COLUMN `revision_number` `revision_number` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NOT NULL ,
+CHANGE COLUMN `description` `description` LONGTEXT CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NOT NULL ,
+CHANGE COLUMN `sector` `sector` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL DEFAULT NULL ;
+ALTER TABLE `whale_enterprises`.`software_model` 
+CHANGE COLUMN `sector` `sector` VARCHAR(45) CHARACTER SET 'utf8mb3' NULL DEFAULT NULL ;
+ALTER TABLE `whale_enterprises`.`software_model` 
+CHANGE COLUMN `sector` `sector` VARCHAR(45) CHARACTER SET 'utf8mb3' NULL DEFAULT NULL ;
+
+ALTER SCHEMA `whale_enterprises`  DEFAULT CHARACTER SET utf8  DEFAULT COLLATE utf8_general_ci ;

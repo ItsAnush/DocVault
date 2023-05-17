@@ -99,6 +99,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         border: 0px;
         cursor: pointer;
     }
+
+    .back_button {
+        border: none;
+        background-color: transparent;
+        padding: 11vh 0 0 2vw;
+        position: absolute;
+    }
 </style>
 
 
@@ -143,12 +150,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </ul>
         </nav>
     <?php } ?>
+    <button onclick="history.back()" class="back_button"><img src="./assets/back_arrow.png"></button>
+
     <section class="pdflist">
         <h1>View the Documents </h1>
         <div class="search-box mobile-view">
             <form class="search-box" action="" method="post">
                 <input class="search-bar" type="text" name="filter-value" placeholder="Search Here!" />
                 <button name="filter" class="search_details">Search</button>
+            </form>
+            <form action="">
+                <button name="clear_filter" class="add_user_button">Clear</button>
             </form>
             <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
                 <center style="margin-top: .8vh;">
@@ -228,22 +240,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $sector_result = mysqli_query($link, $sector_sql);
                         $multi_sector = array();
                         while ($sector_row = mysqli_fetch_assoc($sector_result)) {
-                            array_push($multi_sector, $sector_row['sector']);
+                            array_push($multi_sector, 'Not Selected');
                         }
+                        array_push($multi_sector, $sector_row['sector']);
                         $length = count($multi_sector);
                         $value_filter = $_POST['filter-value'];
+                        $value_filter = strtoupper($value_filter);
                         for ($i = 0; $i < $length; $i++) {
                             if ($sector == '') {
                                 if ($value_filter != '') {
-                                    $search_sql = "SELECT * from software_model where CONCAT(drawing_number, revision_number,`sector`, `description`, `file`) LIKE '%$value_filter%' and sector = '$multi_sector[$i]'";
+                                    $search_sql = "SELECT * from software_model WHERE UPPER(CONCAT(drawing_number, revision_number,`sector`, `description`)) LIKE '%{$value_filter}%' and sector = '$multi_sector[$i]' LIMIT 1000";
                                     unset($multi_sector[$i]);
+                                    echo "<br>";
                                 } else {
                                     $search_sql = "SELECT * from software_model WHERE sector = '$multi_sector[$i]'";
                                     unset($multi_sector[$i]);
                                 }
                             }
                             if ($sector != '') {
-                                $search_sql = "SELECT * from software_model where CONCAT(drawing_number, revision_number,`sector`, `description`, `file`) LIKE '%$value_filter%' and sector = '$sector';";
+                                $search_sql = "SELECT * from software_model where CONCAT(drawing_number, revision_number,`sector`, `description`) LIKE '%$value_filter%' and sector = '$sector' LIMIT 1000 COLLATE utf8mb4_unicode_ci";
+                                echo $search_sql;
+                                echo "hey";
                             }
                             $search_result = mysqli_query($link, $search_sql);
                             if (mysqli_num_rows($search_result) > 0) {
@@ -261,18 +278,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         </td>
                                         <td><strong class="hidden@l">Description</strong>&nbsp;
                                             <?php echo $search_row['description']; ?>
-                                        </td>   
+                                        </td>
                                         <td><strong class="hidden@l">Sector</strong>&nbsp;
                                             <?php echo $search_row['sector']; ?>
                                         </td>
                                         <td style='display:flex; flex-direction:row;'>
                                             <form action="file-view-only.php" method='POST' class="table-forms">
+                                                <input type="hidden" name="id" value="<?php echo $search_row['id']; ?>" />
                                                 <input type="hidden" name="filename" value="<?php echo $search_row['file']; ?>" />
                                                 <button type="submit" class="update_details button" data-modal="modalOne" name="view-pdf">View</button>
                                             </form>
                                             <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
                                                 <form action="update-pdf-data.php" method='POST' class="table-forms">
-                                                    <input type="hidden" name="filename" value="<?php echo $search_row['file']; ?>" />
+                                                    <input type="hidden" name="id" value="<?php echo $search_row['id']; ?>" />
                                                     <button type="submit" class="update_details" name="view-pdf">Edit</button>
                                                 </form>
                                             <?php } ?>
@@ -297,15 +315,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         while ($sector_row = mysqli_fetch_assoc($sector_result)) {
                             array_push($multi_sector, $sector_row['sector']);
                         }
+                        array_push($multi_sector, "Not Selected");
                         $length = count($multi_sector);
                         for ($i = 0; $i < $length; $i++) {
                             if ($sector == '') {
-                                $sql = "SELECT * FROM software_model WHERE sector='$multi_sector[$i]' ORDER BY id DESC";
+                                $sql = "SELECT * FROM software_model WHERE sector='$multi_sector[$i]' ORDER BY id DESC LIMIT 1000";
                                 $result = mysqli_query($link, $sql);
                                 unset($multi_sector[$i]);
                             }
                             if ($sector != '') {
-                                $sql = "SELECT * FROM software_model WHERE sector='$sector' ORDER BY id DESC";
+                                $sql = "SELECT * FROM software_model WHERE sector='$sector' ORDER BY id DESC LIMIT 1000";
                                 $result = mysqli_query($link, $sql);
                                 unset($multi_sector[$i]);
                                 $length = 1;
@@ -332,12 +351,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         </td>
                                         <td style='display:flex; flex-direction:row;'>
                                             <form action="file-view-only.php" method='POST' class="table-forms">
+                                                <input type="hidden" name="id" value="<?php echo $row['id']; ?>" />
                                                 <input type="hidden" name="filename" value="<?php echo $row['file']; ?>" />
                                                 <button type="submit" class="update_details button" data-modal="modalOne" name="view-pdf">View</button>
                                             </form>
                                             <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
                                                 <form action="update-pdf-data.php" method='POST' class="table-forms">
-                                                    <input type="hidden" name="filename" value="<?php echo $row['file']; ?>" />
+                                                    <input type="hidden" name="id" value="<?php echo $row['id']; ?>" />
                                                     <button type="submit" class="update_details" name="view-pdf">Edit</button>
                                                 </form>
                                             <?php } ?>

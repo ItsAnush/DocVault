@@ -16,12 +16,17 @@ $sql = "SELECT * FROM users Where username IN ('$username')";
 $result = mysqli_query($link, $sql);
 $row = mysqli_fetch_assoc($result);
 $admin = trim($row['designation']);
-$pdf = $_POST['filename'];
+$id = $_POST['id'];
+$check_file_sql = "SELECT * FROM `whale_enterprises`.`software_model` WHERE id = '$id'";
+$check_file_result = mysqli_query($link, $check_file_sql);
+while ($row = mysqli_fetch_assoc($check_file_result)) {
+    $pdf = $row['file'];
+}
 $path = "./uploads/";
 $file = $path . $pdf;
 $sector_filter = $_POST['sector'];
-
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <script>
@@ -105,14 +110,14 @@ $sector_filter = $_POST['sector'];
         content: "<?php echo $username ?>";
         font-size: 5em;
         font-weight: bold;
-        color: #ccc;
+        color: #000;
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%) rotate(-45deg);
         pointer-events: none;
         z-index: 2;
-        opacity: 0.4;
+        opacity: 0.2;
     }
 
     @media screen and (max-width: 960px) {
@@ -127,6 +132,17 @@ $sector_filter = $_POST['sector'];
         height: auto;
         display: block;
         margin: 0 auto;
+    }
+
+    .align_bottom {
+        position: fixed;
+        bottom: 2%;
+        left: 0;
+        width: 100%;
+        height: 50px;
+        text-align: center;
+        font-size: 16px;
+        padding-top: 15px;
     }
 </style>
 
@@ -173,7 +189,7 @@ $sector_filter = $_POST['sector'];
     <?php } ?>
     <div id="element" class="view-pdf-overall">
         <?php
-        $sql = "SELECT * FROM software_model WHERE file = '$pdf'";
+        $sql = "SELECT * FROM software_model WHERE id = '$id'";
         $result = mysqli_query($link, $sql);
         if (mysqli_num_rows($result) > 0) {
             while ($row = mysqli_fetch_assoc($result)) {
@@ -208,16 +224,19 @@ $sector_filter = $_POST['sector'];
             <div id="canvas_container">
                 <canvas id="pdf_renderer"></canvas>
             </div>
-            <div class="pdf-controls" id="navigation_controls">
-                <button id="go_previous">Previous</button>
-                <button id="go_next">Next</button>
-                <div id="zoom_controls">
-                    <button id="zoom_in">Zoom In</button>
-                    <button id="zoom_out">Zoom Out</button>
-                </div>
-                <button id="reset_pan">Reset Pan</button>
-                <input id="current_page" value="1" type="hidden" />
+        </div>
+    </div>
+    <div class="align_bottom">
+        <div class="pdf-controls" id="navigation_controls">
+            <button id="go_previous">Previous</button>
+            <button id="go_next">Next</button>
+            <div id="zoom_controls">
+                <button id="zoom_in">Zoom In</button>
+                <button id="zoom_out">Zoom Out</button>
             </div>
+            <button id="reset_pan">Reset Pan</button>
+            <button onclick="history.back()" class="back_button">Go Back</button>
+            <input id="current_page" value="1" type="hidden" />
         </div>
     </div>
 
@@ -291,7 +310,7 @@ $sector_filter = $_POST['sector'];
         // Add an event listener to the element to detect when the mouse leaves the element
         element.addEventListener('mouseleave', () => {
             // Blur the element's content
-            element.style.filter = 'blur(12px)';
+            element.style.filter = 'blur(10px)';
         });
         document.body.addEventListener('click', () => {
             // Remove the blur effect from the element's content
@@ -300,7 +319,7 @@ $sector_filter = $_POST['sector'];
         // Get the element where you want to disable long press
 
         // Set the minimum duration of the key press in milliseconds
-        var longPressDuration = 1000;
+        var longPressDuration = 1;
 
         // Create a variable to store the start time of the key press
         var pressStartTime;
@@ -343,7 +362,7 @@ $sector_filter = $_POST['sector'];
             if (event.key === 'Enter') {
                 timeoutId = setTimeout(function() {
                     element.style.filter = 'blur(12px)';
-                }, 1000); // Set a timeout of 1 second (1000 milliseconds)
+                }, 100); // Set a timeout of .1 second (100 milliseconds)
             }
         });
 
@@ -483,6 +502,12 @@ $sector_filter = $_POST['sector'];
 </script>
 
 
-
+<script>
+    setInterval(function() {
+        var alignBottom = document.getElementsByClassName('align_bottom')[0];
+        alignBottom.style.position = 'fixed';
+        alignBottom.style.bottom = '2%';
+    }, 1);
+</script>
 
 </html>

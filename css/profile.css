@@ -338,6 +338,7 @@ nav {
 }
 
 
+
 /*Styling Links*/
 
 .nav-links {
@@ -512,4 +513,11 @@ nav {
 
 .toggle .line3 {
     transform: rotate(45deg) translate(-5px, -6px);
+}
+
+.back_button {
+    border: none;
+    background-color: transparent;
+    padding: 11vh 0 0 2vw;
+    position: absolute;
 }

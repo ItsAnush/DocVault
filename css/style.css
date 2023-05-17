@@ -300,7 +300,7 @@ nav {
 
 .admin-upload-documents {
     min-height: 35px;
-    min-width: 83vw;
+    padding: 0 15vw 0 15vw;
     background-color: #0c48db;
     color: #fff;
     border-radius: 5px;
@@ -309,9 +309,13 @@ nav {
     justify-content: center;
     align-items: center;
     margin-top: 10vh;
-    margin-left: 3.5vw;
     cursor: pointer;
     margin-bottom: 5vh;
+}
+.upload-button-flex{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
 }
 
 
@@ -353,6 +357,7 @@ nav {
         margin-top: 0;
         margin-bottom: 50px;
     }
+
 }
 
 /*Pop up form*/

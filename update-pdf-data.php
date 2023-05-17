@@ -14,7 +14,7 @@ $sql = "SELECT * FROM users Where username IN ('$username')";
 $result = mysqli_query($link, $sql);
 $row = mysqli_fetch_assoc($result);
 $admin = trim($row['designation']);
-$file_name = $_POST["filename"];
+$id = $_POST["id"];
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -104,6 +104,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     .select-dropdown__options input[type="checkbox"] {
         margin-right: 5px;
     }
+
+    .over-all-box,
+    .container {
+        min-height: 60vh !important;
+    }
+
+    .container h1 {
+        margin-bottom: 15px;
+    }
+
+    .back_button {
+        border: none;
+        background-color: transparent;
+        padding: 11vh 0 0 2vw;
+        position: absolute;
+    }
+
+    .actual-btn {
+        background-color: #0c48db;
+        color: #fff !important;
+        padding: 3px;
+        border-radius: 5px;
+    }
 </style>
 
 <body>
@@ -121,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <ul class="nav-links">
                 <li><a href="index.php">Home</a></li>
                 <li><a href="view-only.php" style="color:#fff" class="active">Documents</a></li>
-                <li><a href="#">User Details</a></li>
+                <li><a href="useraccess.php">User Details</a></li>
                 <li><a href="profile.php">Profile</a></li>
                 <li><a href="logout.php" class="join-button">Logout</a></li>
             </ul>
@@ -149,28 +172,63 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </nav>
     <?php } ?>
     <!-- partial:index.partial.html -->
+    <button onclick="history.back()" class="back_button"><img src="./assets/back_arrow.png"></button>
+
     <section class="over-all-box">
         <div class="container margin_top">
             <div id="logoo">
                 <h1 class="logoo">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h1>
             </div>
             <?php
-            $sql = "SELECT * FROM `software_model` WHERE `file` = '$file_name'";
+            $sql = "SELECT * FROM `software_model` WHERE `id` = '$id'";
             #echo $sql;
             $result = mysqli_query($link, $sql);
             while ($row = mysqli_fetch_assoc($result)) { ?>
                 <div class="rightbox">
                     <div class="profile">
-                        <h1>Update Details of <?php echo $row['drawing_number'] ?></h1>
-                        <form action="action.php" method="post">
+                        <h1>
+                            Update Details of <?php echo $row['drawing_number'] ?>
+                        </h1>
+                        <form action="action.php" id="myForm" method="post" enctype="multipart/form-data">
                             <label>Drawing Number</label>
-                            <input type="text" class="form-control" name="drawing_number" placeholder="Enter Drawing Name" value="<?php echo $row['drawing_number'] ?>" required><br />
+                            <input type="text" class="form-control" id="drawing-number" name="drawing_number" placeholder="Enter Drawing Name" value="<?php echo $row['drawing_number'] ?>" readonly><br />
                             <label>Revision Number</label>
                             <input type="text" class="form-control" name="revision_number" placeholder="Enter Revision Number" value="<?php echo $row['revision_number'] ?>" required><br />
                             <label>Description</label>
                             <input type="text" class="form-control" name="description" placeholder="Enter Description" value="<?php echo $row['description'] ?>" required><br />
                             <br />
-
+                            <div class="select-dropdown">
+                                <div class="select-dropdown__header">
+                                    <div class="select-dropdown__title">Select Sector</div>
+                                    <div class="select-dropdown__toggle"></div>
+                                </div>
+                                <div class="select-dropdown__options" selectedOptions[]>
+                                    <?php
+                                    $sector_sql = "SELECT * FROM `sectors` WHERE username = '$username'";
+                                    $sector_result = mysqli_query($link, $sector_sql);
+                                    $multi_sector = array();
+                                    while ($sector_row = mysqli_fetch_assoc($sector_result)) {
+                                        $sector = array_push($multi_sector, $sector_row['sector']);
+                                    }
+                                    $length = count($multi_sector);
+                                    for ($i = 0; $i < $length; $i++) {
+                                    ?>
+                                        <label>
+                                            <input type="checkbox" value="<?php echo $multi_sector[$i] ?>" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $multi_sector[$i] ?>
+                                        </label>
+                                    <?php
+                                        unset($multi_sector[$i]);
+                                    } ?>
+                                </div>
+                            </div>
+                            <?php
+                            if ($row['sector'] == "Not Selected") { ?>
+                                <div style="margin-bottom: 1vh;" class="form-group">
+                                    <input type="file" name="file" class="form-control" title="Upload PDF" id="actual-btn" hidden required />
+                                    <label class="actual-btn" for="actual-btn">Choose File</label>
+                                    <span id="file-chosen">No file chosen</span>
+                                </div>
+                            <?php } ?>
                             <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
                                 <input style="display:none" type="text" name="id" value="<?php echo $row['id'] ?>">
                                 <input style="display:none" type="text" name="file" value="<?php echo $row['file'] ?>">
@@ -203,10 +261,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     var noCopy = true;
     var noScreenshot = true;
     var autoBlur = false;
+
+    const actualBtn = document.getElementById('actual-btn');
+
+    const fileChosen = document.getElementById('file-chosen');
+
+    actualBtn.addEventListener('change', function() {
+        fileChosen.textContent = this.files[0].name
+    })
 </script>
 <script type="text/javascript" src="https://pdfanticopy.com/noprint.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
 <script>
     const form = document.querySelector('#myForm'); // replace 'myForm' with the ID of your form
     const dropdown = document.querySelector('.select-dropdown');
@@ -261,5 +326,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     });
 </script>
+
+
+<script>
+    // Get the drawing number input field
+    const drawingNumberInput = document.querySelector('#drawing-number');
+
+    // Get the select dropdown div
+    const selectDropdown = document.querySelector('.select-dropdown');
+
+    // Listen for changes to the drawing number input field
+    drawingNumberInput.addEventListener('input', () => {
+        // Disable the select dropdown div
+        selectDropdown.disabled = true;
+    });
+</script>
+
 
 </html>
