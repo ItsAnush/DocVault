@@ -322,10 +322,6 @@ $personal_number = $row['phone_number'];
                                 </div>
                                 <br />
                                 <div class="form-group">
-                                    <input type="text" class="form-control" name="desc" placeholder="Description" required>
-                                </div>
-                                <br />
-                                <div class="form-group">
                                     <input type="file" name="file" class="form-control" title="Upload PDF" id="actual-btn" hidden required />
                                     <label class="file_choose" for="actual-btn">CHOOSE FILE</label>
                                     <span id="file-chosen">No file chosen</span>

@@ -188,58 +188,101 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="profile">
                         <h1>
                             Update Details of <?php echo $row['drawing_number'] ?>
-                        </h1>
-                        <form action="action.php" id="myForm" method="post" enctype="multipart/form-data">
-                            <label>Drawing Number</label>
-                            <input type="text" class="form-control" id="drawing-number" name="drawing_number" placeholder="Enter Drawing Name" value="<?php echo $row['drawing_number'] ?>" readonly><br />
-                            <label>Revision Number</label>
-                            <input type="text" class="form-control" name="revision_number" placeholder="Enter Revision Number" value="<?php echo $row['revision_number'] ?>" required><br />
-                            <label>Description</label>
-                            <input type="text" class="form-control" name="description" placeholder="Enter Description" value="<?php echo $row['description'] ?>" required><br />
-                            <br />
-                            <div class="select-dropdown">
-                                <div class="select-dropdown__header">
-                                    <div class="select-dropdown__title">Select Sector</div>
-                                    <div class="select-dropdown__toggle"></div>
+                        </h1><?php
+                                if ($row['file'] == 'not_uploaded.pdf') { ?>
+                            <form action="action.php" id="myForm" method="post" enctype="multipart/form-data">
+                                <label>Drawing Number</label>
+                                <input type="text" class="form-control" id="drawing-number" name="drawing_number" placeholder="Enter Drawing Name" value="<?php echo $row['drawing_number'] ?>" readonly><br />
+                                <label>Revision Number</label>
+                                <input type="text" class="form-control" name="revision_number" placeholder="Enter Revision Number" value="<?php echo $row['revision_number'] ?>" required><br />
+                                <label>Description</label>
+                                <input type="text" class="form-control" name="description" placeholder="Enter Description" value="<?php echo $row['description'] ?>" required><br />
+                                <br />
+                                <div class="select-dropdown">
+                                    <div class="select-dropdown__header">
+                                        <div class="select-dropdown__title">Select Sector</div>
+                                        <div class="select-dropdown__toggle"></div>
+                                    </div>
+                                    <div class="select-dropdown__options" selectedOptions[]>
+                                        <?php
+                                        $sector_sql = "SELECT * FROM `sectors` WHERE username = '$username'";
+                                        $sector_result = mysqli_query($link, $sector_sql);
+                                        $multi_sector = array();
+                                        while ($sector_row = mysqli_fetch_assoc($sector_result)) {
+                                            $sector = array_push($multi_sector, $sector_row['sector']);
+                                        }
+                                        $length = count($multi_sector);
+                                        for ($i = 0; $i < $length; $i++) {
+                                        ?>
+                                            <label>
+                                                <input type="checkbox" value="<?php echo $multi_sector[$i] ?>" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $multi_sector[$i] ?>
+                                            </label>
+                                        <?php
+                                            unset($multi_sector[$i]);
+                                        } ?>
+                                    </div>
                                 </div>
-                                <div class="select-dropdown__options" selectedOptions[]>
-                                    <?php
-                                    $sector_sql = "SELECT * FROM `sectors` WHERE username = '$username'";
-                                    $sector_result = mysqli_query($link, $sector_sql);
-                                    $multi_sector = array();
-                                    while ($sector_row = mysqli_fetch_assoc($sector_result)) {
-                                        $sector = array_push($multi_sector, $sector_row['sector']);
-                                    }
-                                    $length = count($multi_sector);
-                                    for ($i = 0; $i < $length; $i++) {
-                                    ?>
-                                        <label>
-                                            <input type="checkbox" value="<?php echo $multi_sector[$i] ?>" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $multi_sector[$i] ?>
-                                        </label>
-                                    <?php
-                                        unset($multi_sector[$i]);
-                                    } ?>
+
+                                <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
+                                    <input style="display:none" type="text" name="id" value="<?php echo $row['id'] ?>">
+                                    <input style="display:none" type="text" name="file" value="<?php echo $row['file'] ?>">
+                                    <input style="display:none" type="text" name="delete-pdf" value="<?php echo $row['file'] ?>">
+                                    <input style="display:none" type="text" name="sector" value="<?php echo $row['sector'] ?>">
+                                    <div class="flex-row">
+                                        <div style="margin-top: .5vh;" class="form-group">
+                                            <input type="file" name="file" class="form-control" title="Upload PDF" id="actual-btn" hidden required />
+                                            <label class="actual-btn" for="actual-btn">Choose File</label>
+                                            <span id="file-chosen">No file chosen</span>
+                                        </div>
+                                        <button type="submit" class="btnRegister" name="update-pdf-details-file" onclick="return confirm('Are you sure you want to Submit?')" value="Submit">Update</button>
+                                    </div>
+                                <?php } ?>
+                            </form>
+                        <?php } else { ?>
+                            <form action="action.php" id="myForm" method="post">
+                                <label>Drawing Number</label>
+                                <input type="text" class="form-control" id="drawing-number" name="drawing_number" placeholder="Enter Drawing Name" value="<?php echo $row['drawing_number'] ?>" readonly><br />
+                                <label>Revision Number</label>
+                                <input type="text" class="form-control" name="revision_number" placeholder="Enter Revision Number" value="<?php echo $row['revision_number'] ?>" required><br />
+                                <label>Description</label>
+                                <input type="text" class="form-control" name="description" placeholder="Enter Description" value="<?php echo $row['description'] ?>" required><br />
+                                <br />
+                                <div class="select-dropdown">
+                                    <div class="select-dropdown__header">
+                                        <div class="select-dropdown__title">Select Sector</div>
+                                        <div class="select-dropdown__toggle"></div>
+                                    </div>
+                                    <div class="select-dropdown__options" selectedOptions[]>
+                                        <?php
+                                        $sector_sql = "SELECT * FROM `sectors` WHERE username = '$username'";
+                                        $sector_result = mysqli_query($link, $sector_sql);
+                                        $multi_sector = array();
+                                        while ($sector_row = mysqli_fetch_assoc($sector_result)) {
+                                            $sector = array_push($multi_sector, $sector_row['sector']);
+                                        }
+                                        $length = count($multi_sector);
+                                        for ($i = 0; $i < $length; $i++) {
+                                        ?>
+                                            <label>
+                                                <input type="checkbox" value="<?php echo $multi_sector[$i] ?>" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $multi_sector[$i] ?>
+                                            </label>
+                                        <?php
+                                            unset($multi_sector[$i]);
+                                        } ?>
+                                    </div>
                                 </div>
-                            </div>
-                            <?php
-                            if ($row['sector'] == "Not Selected") { ?>
-                                <div style="margin-bottom: 1vh;" class="form-group">
-                                    <input type="file" name="file" class="form-control" title="Upload PDF" id="actual-btn" hidden required />
-                                    <label class="actual-btn" for="actual-btn">Choose File</label>
-                                    <span id="file-chosen">No file chosen</span>
-                                </div>
-                            <?php } ?>
-                            <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
-                                <input style="display:none" type="text" name="id" value="<?php echo $row['id'] ?>">
-                                <input style="display:none" type="text" name="file" value="<?php echo $row['file'] ?>">
-                                <input style="display:none" type="text" name="delete-pdf" value="<?php echo $row['file'] ?>">
-                                <input style="display:none" type="text" name="sector" value="<?php echo $row['sector'] ?>">
-                                <div class="flex-row">
-                                    <button type="submit" class="btnRegister" name="update-pdf-details" onclick="return confirm('Are you sure you want to Submit?')" value="Submit">Update</button>
-                                    <button type="submit" class="btnRegister delete" onclick="return confirm('Are you sure you want to Delete?')" name="delete-pdf-btn">Delete</button>
-                                </div>
-                            <?php } ?>
-                        </form>
+                                <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
+                                    <input style="display:none" type="text" name="id" value="<?php echo $row['id'] ?>">
+                                    <input style="display:none" type="text" name="file" value="<?php echo $row['file'] ?>">
+                                    <input style="display:none" type="text" name="delete-pdf" value="<?php echo $row['file'] ?>">
+                                    <input style="display:none" type="text" name="sector" value="<?php echo $row['sector'] ?>">
+                                    <div class="flex-row">
+                                        <button type="submit" class="btnRegister" name="update-pdf-details" onclick="return confirm('Are you sure you want to Submit?')" value="Submit">Update</button>
+                                        <button type="submit" class="btnRegister delete" onclick="return confirm('Are you sure you want to Delete?')" name="delete-pdf-btn">Delete</button>
+                                    </div>
+                                <?php } ?>
+                            </form>
+                        <?php } ?>
                     </div>
                 <?php
             }

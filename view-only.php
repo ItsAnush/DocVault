@@ -240,25 +240,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $sector_result = mysqli_query($link, $sector_sql);
                         $multi_sector = array();
                         while ($sector_row = mysqli_fetch_assoc($sector_result)) {
-                            array_push($multi_sector, 'Not Selected');
+                            array_push($multi_sector, $sector_row['sector']);
                         }
-                        array_push($multi_sector, $sector_row['sector']);
+                        array_push($multi_sector, 'Not Selected');
                         $length = count($multi_sector);
                         $value_filter = $_POST['filter-value'];
                         $value_filter = strtoupper($value_filter);
                         for ($i = 0; $i < $length; $i++) {
                             if ($sector == '') {
                                 if ($value_filter != '') {
-                                    $search_sql = "SELECT * from software_model WHERE UPPER(CONCAT(drawing_number, revision_number,`sector`, `description`)) LIKE '%{$value_filter}%' and sector = '$multi_sector[$i]' LIMIT 1000";
+                                    $search_sql = "SELECT * from software_model WHERE UPPER(CONCAT(drawing_number, revision_number,`sector`, `description`)) LIKE '%{$value_filter}%' and sector = '$multi_sector[$i]' ORDER BY drawing_number ASC LIMIT 1000";
                                     unset($multi_sector[$i]);
                                     echo "<br>";
                                 } else {
-                                    $search_sql = "SELECT * from software_model WHERE sector = '$multi_sector[$i]'";
+                                    $search_sql = "SELECT * from software_model WHERE sector = '$multi_sector[$i]' ORDER BY drawing_number ASC";
                                     unset($multi_sector[$i]);
                                 }
                             }
                             if ($sector != '') {
-                                $search_sql = "SELECT * from software_model where CONCAT(drawing_number, revision_number,`sector`, `description`) LIKE '%$value_filter%' and sector = '$sector' LIMIT 1000 COLLATE utf8mb4_unicode_ci";
+                                $search_sql = "SELECT * from software_model where CONCAT(drawing_number, revision_number,`sector`, `description`) LIKE '%$value_filter%' and sector = '$sector' ORDER BY drawing_number ASC LIMIT 1000 COLLATE utf8mb4_unicode_ci";
                                 echo $search_sql;
                                 echo "hey";
                             }
@@ -297,8 +297,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         </td>
                                         <td>
                                             <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
-                                                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method='POST' class="table-forms">
+                                                <form action="action.php" method='POST' class="table-forms">
                                                     <input type="hidden" name="delete-pdf" value="<?php echo $search_row['file']; ?>" />
+                                                    <input type="hidden" name="id" value="<?php echo $row['id']; ?>" />
                                                     <button type="submit" onclick="return confirm('Are you sure you want to Delete?')" class="update_details red" name="delete-pdf-btn">Delete</button>
                                                 </form> <?php } ?>
                                         </td>
@@ -364,8 +365,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         </td>
                                         <td>
                                             <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
-                                                <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method='POST' class="table-forms">
+                                                <form action="action.php" method='POST' class="table-forms">
                                                     <input type="hidden" name="delete-pdf" value="<?php echo $row['file']; ?>" />
+                                                    <input type="hidden" name="id" value="<?php echo $row['id']; ?>" />
                                                     <button type="submit" onclick="return confirm('Are you sure you want to Delete?')" class="update_details red" name="delete-pdf-btn">Delete</button>
                                                 </form> <?php } ?>
                                         </td>
