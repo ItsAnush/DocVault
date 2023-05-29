@@ -15,6 +15,10 @@ error_reporting(0); // For not showing any error
 $sql = "SELECT * FROM users Where username IN ('$username')";
 $result = mysqli_query($link, $sql);
 $row = mysqli_fetch_assoc($result);
+if ($row['username'] == null) {
+    header('Location: logout.php');
+    exit();
+}
 $admin = trim($row['designation']);
 $id = $_POST['id'];
 $check_file_sql = "SELECT * FROM `whale_enterprises`.`software_model` WHERE id = '$id'";
@@ -144,6 +148,11 @@ $sector_filter = $_POST['sector'];
         font-size: 16px;
         padding-top: 15px;
     }
+
+    a {
+        text-decoration: none;
+        color: #000;
+    }
 </style>
 
 <body class="noprint" oncontextmenu="return false;">
@@ -235,7 +244,7 @@ $sector_filter = $_POST['sector'];
                 <button id="zoom_out">Zoom Out</button>
             </div>
             <button id="reset_pan">Reset Pan</button>
-            <button onclick="history.back()" class="back_button">Go Back</button>
+            <button class="back_button"><a href="view-only.php">Go Back</a></button>
             <input id="current_page" value="1" type="hidden" />
         </div>
     </div>

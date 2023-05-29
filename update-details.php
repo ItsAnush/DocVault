@@ -16,7 +16,10 @@ $result = mysqli_query($link, $sql);
 $row = mysqli_fetch_assoc($result);
 $admin = trim($row['designation']);
 
-
+if ($row['username'] == null) {
+    header('Location: logout.php');
+    exit();
+}
 
 $sector_sql = "SELECT * FROM `sectors` WHERE username = '$userid'";
 $sector_result = mysqli_query($link, $sector_sql);

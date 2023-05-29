@@ -16,6 +16,10 @@ error_reporting(0); // For not showing any error
 $sql = "SELECT * FROM users Where username IN ('$username')";
 $result = mysqli_query($link, $sql);
 $row = mysqli_fetch_assoc($result);
+if ($row['username'] == null) {
+    header('Location: logout.php');
+    exit();
+}
 $admin = trim($row['designation']);
 ?>
 <!DOCTYPE html>

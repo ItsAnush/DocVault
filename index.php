@@ -11,9 +11,16 @@ if (!isset($_SESSION["whale_enterprises_loggedin"]) || $_SESSION["whale_enterpri
 $username = $_SESSION["username"];
 
 error_reporting(0); // For not showing any error
+
+$username = $_SESSION["username"];
 $sql = "SELECT * FROM users Where username IN ('$username')";
 $result = mysqli_query($link, $sql);
 $row = mysqli_fetch_assoc($result);
+if ($row['username'] == null) {
+    header('Location: logout.php');
+    exit();
+}
+
 $admin = trim($row['designation']);
 $personal_name = $row['name'];
 $personal_number = $row['phone_number'];

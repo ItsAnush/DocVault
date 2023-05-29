@@ -7,12 +7,16 @@ if (!isset($_SESSION["whale_enterprises_loggedin"]) || $_SESSION["whale_enterpri
     header("location: login.php");
     exit;
 }
-$usernamee = $_SESSION["username"];
 
+$username = $_SESSION["username"];
 error_reporting(0); // For not showing any error
 $sql = "SELECT * FROM users Where username IN ('$usernamee')";
 $result = mysqli_query($link, $sql);
 $row = mysqli_fetch_assoc($result);
+if ($row['username'] == null) {
+    header('Location: logout.php');
+    exit();
+}
 $admin = trim($row['designation']);
 
 $username = $password = $confirm_password = "";

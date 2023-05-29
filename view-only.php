@@ -15,6 +15,10 @@ error_reporting(0); // For not showing any error
 $sql = "SELECT * FROM users Where username IN ('$username')";
 $result = mysqli_query($link, $sql);
 $row = mysqli_fetch_assoc($result);
+if ($row['username'] == null) {
+    header('Location: logout.php');
+    exit();
+}
 $admin = trim($row['designation']);
 
 $search_username = $row['username'];
@@ -150,7 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </ul>
         </nav>
     <?php } ?>
-    <button onclick="history.back()" class="back_button"><img src="./assets/back_arrow.png"></button>
+    <a href="index.php" class="back_button"><img src="./assets/back_arrow.png"></a>
 
     <section class="pdflist">
         <h1>View the Documents </h1>
