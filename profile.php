@@ -8,7 +8,7 @@ if (!isset($_SESSION["whale_enterprises_loggedin"]) || $_SESSION["whale_enterpri
     exit;
 }
 
-$username = $_SESSION["username"];
+$usernamee = $_SESSION["username"];
 error_reporting(0); // For not showing any error
 $sql = "SELECT * FROM users Where username IN ('$usernamee')";
 $result = mysqli_query($link, $sql);
@@ -219,6 +219,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <label>Re-enter new password</label>
                             <input type="password" name="confirm_password" autocomplete="off" class="form-control <?php echo (!empty($confirm_password_err)) ? 'is-invalid' : ''; ?>" value="<?php echo $confirm_password; ?>" />
                             <span class="invalid-feedback"><?php echo $confirm_password_err; ?></span>
+                            <br />
                             <br />
                             <br />
                             <button name="password-reset" type="submit" value="submit">Update</button>

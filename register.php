@@ -62,7 +62,6 @@ if (trim($row['designation']) == "Admin" or trim($row['designation']) == "SuperA
 
                         // Check input errors before inserting in database
                         if (empty($username_err) && empty($password_err) && empty($confirm_password_err)) {
-                            echo 'como';
                             // Prepare an insert statement
                             if (True) {
 
@@ -223,9 +222,7 @@ if (trim($row['designation']) == "Admin" or trim($row['designation']) == "SuperA
 
                                         <div class="field padding-bottom--24">
                                             <input style="background: blue;" type="submit" class="login_btn" value="Register">
-
                                         </div>
-
                                     </form>
                                 </div>
                             </div>
