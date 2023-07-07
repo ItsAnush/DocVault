@@ -3,7 +3,7 @@ include 'config.php';
 //error_reporting(0); // For not showing any error
 
 session_start();
-
+error_reporting(0);
 $username = $_SESSION["username"];
 
 $sql = "SELECT * FROM student_details WHERE email IN ('$username')";
@@ -645,3 +645,4 @@ if (isset($_POST['update-pdf-details'])) {
     }
     header('Location: view-only.php');
 }
+header('Location: index.php');

@@ -168,7 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </form>
             <?php if (trim($admin) == 'SuperAdmin' or trim($admin) == 'Admin') { ?>
                 <center style="margin-top: .8vh;">
-                    <button class="add_user_button" onclick="ExportToExcel('xlsx')">Download</button>
+                    <button id="downloadButton" class="add_user_button">Download</button>
                 </center>
             <?php } ?>
         </div>
@@ -181,45 +181,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         $length = count($multi_sector);
         ?>
-        <table style='display:none;' id="tbl_exporttable_to_xls" border="1">
-            <thead>
-                <th>Drawing Number</th>
-                <th>Revision Number</th>
-                <th>Description</th>
-                <th>Sector</th>
-                <th>Inserted User</th>
-                <th>Last Updated</th>
-            </thead>
-            <tbody>
-                <?php for ($i = 0; $i < $length; $i++) {
-                    $sql = "SELECT * FROM software_model WHERE sector = '$multi_sector[$i]'";
-                    $result = mysqli_query($link, $sql);
-                    unset($multi_sector[$i]);
-                    if (mysqli_num_rows($result) > 0) {
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            $sqllll = "SELECT * FROM software_model WHERE drawing_number = '" . $row['drawing_number'] . "'";
-                ?>
-                            <tr>
-                                <td><?php echo $row['drawing_number'] ?></td>
-                                <td><?php echo $row['revision_number'] ?></td>
-                                <td><?php echo $row['description'] ?></td>
-                                <td>
-                                    <?php
-                                    if ($resultttt = mysqli_query($link, $sqllll)) {
-                                        while ($rowwww = mysqli_fetch_assoc($resultttt)) {
-                                            echo $rowwww['sector'];
-                                        }
-                                    }
-                                    ?>
-                                </td>
-                                <td><?php echo $row['inserted_user'] ?></td>
-                                <td><?php echo $row['last_rev_date'] ?></td>
-                            </tr>
-                <?php }
-                    }
-                } ?>
-            </tbody>
-        </table>
         <?php
         if (isset($_COOKIE['status'])) {
             printf("<center><p style='color:green;'>" . $_COOKIE['status'] . "</p></center>");
@@ -253,7 +214,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         for ($i = 0; $i < $length; $i++) {
                             if ($sector == '') {
                                 if ($value_filter != '') {
-                                    $search_sql = "SELECT * from software_model WHERE UPPER(CONCAT(drawing_number, revision_number,`sector`, `description`)) LIKE '%{$value_filter}%' and sector = '$multi_sector[$i]' ORDER BY drawing_number ASC LIMIT 1000";
+                                    $search_sql = "SELECT * from software_model WHERE UPPER(CONCAT(drawing_number, revision_number,`sector`, `description`)) LIKE '%{$value_filter}%' and sector = '$multi_sector[$i]' ORDER BY drawing_number ASC LIMIT 100";
                                     unset($multi_sector[$i]);
                                     echo "<br>";
                                 } else {
@@ -262,7 +223,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 }
                             }
                             if ($sector != '') {
-                                $search_sql = "SELECT * from software_model where CONCAT(drawing_number, revision_number,`sector`, `description`) LIKE '%$value_filter%' and sector = '$sector' ORDER BY drawing_number ASC LIMIT 1000 COLLATE utf8mb4_unicode_ci";
+                                $search_sql = "SELECT * from software_model where CONCAT(drawing_number, revision_number,`sector`, `description`) LIKE '%$value_filter%' and sector = '$sector' ORDER BY drawing_number ASC LIMIT 100 COLLATE utf8mb4_unicode_ci";
                                 echo $search_sql;
                                 echo "hey";
                             }
@@ -324,12 +285,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $length = count($multi_sector);
                         for ($i = 0; $i < $length; $i++) {
                             if ($sector == '') {
-                                $sql = "SELECT * FROM software_model WHERE sector='$multi_sector[$i]' ORDER BY id DESC LIMIT 1000";
+                                $sql = "SELECT * FROM software_model WHERE sector='$multi_sector[$i]' ORDER BY id DESC LIMIT 100";
                                 $result = mysqli_query($link, $sql);
                                 unset($multi_sector[$i]);
                             }
                             if ($sector != '') {
-                                $sql = "SELECT * FROM software_model WHERE sector='$sector' ORDER BY id DESC LIMIT 1000";
+                                $sql = "SELECT * FROM software_model WHERE sector='$sector' ORDER BY id DESC LIMIT 100";
                                 $result = mysqli_query($link, $sql);
                                 unset($multi_sector[$i]);
                                 $length = 1;
@@ -392,28 +353,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     var noCopy = true;
     var noScreenshot = true;
     var autoBlur = false;
-    const now = new Date();
-    const dd = String(now.getDate()).padStart(2, '0');
-    const mm = String(now.getMonth() + 1).padStart(2, '0');
-    const yyyy = now.getFullYear();
-    const H = String(now.getHours()).padStart(2, '0');
-    const M = String(now.getMinutes()).padStart(2, '0');
-    const S = String(now.getSeconds()).padStart(2, '0');
-    const timestamp = `${dd}-${mm}-${yyyy} ${H}:${M}:${S}`;
-
-    function ExportToExcel(type, fn, dl) {
-        var elt = document.getElementById('tbl_exporttable_to_xls');
-        var wb = XLSX.utils.table_to_book(elt, {
-            sheet: "sheet1"
+    $(document).ready(function() {
+        $('#downloadButton').click(function() {
+            // Make an AJAX call to the download.php script
+            $.ajax({
+                url: 'download.php',
+                type: 'GET',
+                success: function(data) {
+                    // Create a temporary anchor element to initiate the file download
+                    var link = document.createElement('a');
+                    link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(data);
+                    link.download = 'data.csv';
+                    link.target = '_blank';
+                    link.click();
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX error:', error);
+                }
+            });
         });
-        return dl ?
-            XLSX.write(wb, {
-                bookType: type,
-                bookSST: true,
-                type: 'base64'
-            }) :
-            XLSX.writeFile(wb, fn || (timestamp + '.' + (type || 'xlsx')));
-    }
+    });
 </script>
 <script type="text/javascript" src="https://pdfanticopy.com/noprint.js"></script>
 
