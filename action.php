@@ -125,6 +125,10 @@ if (isset($_POST['submit'])) {
                     }
                     setcookie("status", "Successfully Uploaded!", time() + (7), "/");
                     # echo "<center><p style='color:green';>Successfully Uploaded!</p></center>";
+                } else {
+                    $sql = "DELETE from `whale_enterprises`.`software_model` Where `drawing_number` = '$d_no'  and `revision_number` = '$r_no'";
+                    $result = mysqli_query($link, $sql);
+                    setcookie("status", "Action Failed! Please try again with proper Details.", time() + (7), "/");
                 }
             }
             #  echo "loop over";
@@ -299,7 +303,7 @@ if (isset($_POST['profile-update-details'])) {
 if (isset($_POST['delete-pdf-btn'])) {
     $file_name = $_POST['delete-pdf'];
     $id = $_POST['id'];
-    $sector_sql = "SELECT * FROM software_model WHERE id = '$id'";
+    $sector_sql = "SELECT * FROM `software_model` WHERE id = '$id'";
     $sector_result = mysqli_query($link, $sector_sql);
     while ($sector_row = mysqli_fetch_assoc($sector_result)) {
         $sector = $sector_row['sector'];
@@ -310,10 +314,11 @@ if (isset($_POST['delete-pdf-btn'])) {
         $path = "./uploads/";
         $file = $path . $file_name;
         #echo $file;
-        $status = unlink($file);
+        if($file_name != "not_uploaded.pdf")
+            $status = unlink($file);
     }
     #echo "File deleted successfully";
-    $sql = "DELETE from software_model WHERE id = '$id'";
+    $sql = "DELETE from `software_model` WHERE id = '$id'";
     echo $sql;
     if (mysqli_query($link, $sql)) {
         setcookie("status", "Successfully removed the drawing number '" . $d_no . "' from '" . $sector . "'", time() + (7), "/");
