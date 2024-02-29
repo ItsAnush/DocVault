@@ -5,6 +5,7 @@ Welcome to the Document Management Portal! This portal is designed to efficientl
 <div align="center">
   <img src="./assets/sample.gif" alt="Sample GIF" width="500">
 </div>
+
 ## Features
 
 - **Sector-wise Document Management**: Documents can be uploaded and organized based on different sectors or categories, facilitating easy access and navigation.
