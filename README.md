@@ -2,8 +2,9 @@
 
 Welcome to the Document Management Portal! This portal is designed to efficiently manage documents while prioritizing security. With sector-wise organization and privilege-based options, users can seamlessly upload, edit, and view documents while ensuring data integrity and confidentiality.
 
-![Sample GIF](./assets/sample.gif)
-
+<div align="center">
+  <img src="./assets/sample.gif" alt="Sample GIF" width="500">
+</div>
 ## Features
 
 - **Sector-wise Document Management**: Documents can be uploaded and organized based on different sectors or categories, facilitating easy access and navigation.
