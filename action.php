@@ -300,25 +300,25 @@ if (isset($_POST['profile-update-details'])) {
     }
     header('Location: profile.php');
 }
+
 if (isset($_POST['delete-pdf-btn'])) {
     $file_name = $_POST['delete-pdf'];
     $id = $_POST['id'];
-    $sector_sql = "SELECT * FROM `software_model` WHERE id = '$id'";
+    $sector_sql = "SELECT * FROM `software_model` WHERE id = '" . $id . "'";
     $sector_result = mysqli_query($link, $sector_sql);
     while ($sector_row = mysqli_fetch_assoc($sector_result)) {
         $sector = $sector_row['sector'];
         $d_no = $sector_row['drawing_number'];
     }
-    if ($sector != "Not Selected") {
-        #echo $filename;
+    if ($file_name != "not_uploaded.pdf" && $sector != "Not Selected") {
+        echo $filename;
         $path = "./uploads/";
         $file = $path . $file_name;
-        #echo $file;
-        if($file_name != "not_uploaded.pdf")
-            $status = unlink($file);
+        echo $file;
+        $status = unlink($file);
     }
-    #echo "File deleted successfully";
-    $sql = "DELETE from `software_model` WHERE id = '$id'";
+    echo "File deleted successfully";
+    $sql = "DELETE from `software_model` WHERE id = '" . $id . "'";
     echo $sql;
     if (mysqli_query($link, $sql)) {
         setcookie("status", "Successfully removed the drawing number '" . $d_no . "' from '" . $sector . "'", time() + (7), "/");
@@ -327,8 +327,6 @@ if (isset($_POST['delete-pdf-btn'])) {
         setcookie("status", "Failed to remove the file : '" . $file_name . "'", time() + (7), "/");
         echo "<center><p style='color:red';>Failed to Delete the Data</p></center>";
     }
-    header('Location: view-only.php', true, 303);
-    exit();
 }
 if (isset($_POST['update-pdf-details-file'])) {
     $d_no = $_POST['drawing_number'];
@@ -388,6 +386,12 @@ if (isset($_POST['update-pdf-details-file'])) {
             $uploads_dir = 'uploads';
             $check_file_result = mysqli_query($link, $check_file_sql);
             $unique_name = $unique_id . $pname;
+
+            $targetDir = "uploads/";  // Directory where files will be uploaded
+            $targetFile = $targetDir . basename($_FILES["fileToUpload"]["name"]);
+            $uploadOk = 1;
+            $pdfFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+
             if (mysqli_num_rows($check_file_result) > 0) {
                 $check_file_row = mysqli_fetch_assoc($check_file_result);
                 $file_path_name = $check_file_row['file'];
@@ -467,8 +471,8 @@ if (isset($_POST['update-pdf-details-file'])) {
             #echo "loop over";
         }
     }
-    header('Location: view-only.php');
 }
+
 if (isset($_POST['update-pdf-details'])) {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // retrieve the selected values from the form data
@@ -538,7 +542,6 @@ if (isset($_POST['update-pdf-details'])) {
         } else {
             setcookie("status", "No file found!", time() + (7), "/");
         }
-        header('Location: view-only.php');
     } else {
         $d_no = $_POST['drawing_number'];
         $r_no = $_POST['revision_number'];
@@ -648,6 +651,5 @@ if (isset($_POST['update-pdf-details'])) {
             #echo "loop over";
         }
     }
-    header('Location: view-only.php');
 }
-header('Location: index.php');
+header('Location: view-only.php');

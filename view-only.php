@@ -44,34 +44,7 @@ if ($sector_4 != '') {
 $s_no = 1;
 
 
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    if (isset($_POST['delete-pdf-btn'])) {
-        $file_name = $_POST['delete-pdf'];
-        #echo $filename;
-        $path = "./uploads/";
-        $file = $path . $file_name;
-        #echo $file;
-        $status = unlink($file);
-        if ($status) {
-            #echo "File deleted successfully";
-            $sql = "DELETE from software_model WHERE file = '$file_name'";
-            #echo $sql;
-            if (mysqli_query($link, $sql)) {
-                setcookie("delete_status", "Successfully removed the file : $file_name", time() + (7), "/");
-                #echo "<center><p style='color:green';>Successfully Removed the File.</p></center>";
-            } else {
-                setcookie("delete_status", "Failed to remove the file : $file_name.", time() + (7), "/");
-                #echo "<center><p style='color:red';>Failed to remove the file</p></center>";
-            }
-        } else {
-            #echo "Sorry!";
-        }
-        header('Location: view-only.php', true, 303);
-        exit();
-    }
-}
 
 ?>
 <!DOCTYPE html>

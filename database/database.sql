@@ -1,26 +1,8 @@
--- phpMyAdmin SQL Dump
--- version 5.2.0
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1:3306
--- Generation Time: Mar 10, 2023 at 06:49 AM
--- Server version: 8.0.31
--- PHP Version: 8.0.26
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
 
 --
 -- Database: `whale_enterprises`
 --
-CREATE DATABASE IF NOT EXISTS `whale_enterprises` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+CREATE DATABASE  `whale_enterprises`;
 USE `whale_enterprises`;
 
 -- --------------------------------------------------------
@@ -36,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `sectors` (
   `sector` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 --
 -- Dumping data for table `sectors`
@@ -65,7 +47,7 @@ CREATE TABLE IF NOT EXISTS `software_model` (
   `last_rev_date` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ;
 
 -- --------------------------------------------------------
 
@@ -85,7 +67,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `code` varchar(10) DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+);
 
 --
 -- Dumping data for table `users`
@@ -95,19 +77,14 @@ INSERT INTO `users` (`id`, `username`, `password`, `created_at`, `name`, `phone_
 (1, 'ternos', '$2y$10$LvhZ5PeI1PHdZGFJdfxUBeManXBPbcXWWKuCrt5YgqhkPCalNPdzm', '2023-03-10 12:17:51', 'Whale Enterprises', '9566555628', 'SuperAdmin', '0');
 COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-
 
 ALTER TABLE `whale_enterprises`.`software_model` 
-CHANGE COLUMN `drawing_number` `drawing_number` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NOT NULL ,
-CHANGE COLUMN `revision_number` `revision_number` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NOT NULL ,
-CHANGE COLUMN `description` `description` LONGTEXT CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NOT NULL ,
-CHANGE COLUMN `sector` `sector` VARCHAR(45) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL DEFAULT NULL ;
+CHANGE COLUMN `drawing_number` `drawing_number` VARCHAR(45) NOT NULL ,
+CHANGE COLUMN `revision_number` `revision_number` VARCHAR(45) NOT NULL ,
+CHANGE COLUMN `description` `description` LONGTEXT NOT NULL ,
+CHANGE COLUMN `sector` `sector` VARCHAR(45) NULL DEFAULT NULL ;
 ALTER TABLE `whale_enterprises`.`software_model` 
-CHANGE COLUMN `sector` `sector` VARCHAR(45) CHARACTER SET 'utf8mb3' NULL DEFAULT NULL ;
+CHANGE COLUMN `sector` `sector` VARCHAR(45) NULL DEFAULT NULL ;
 ALTER TABLE `whale_enterprises`.`software_model` 
-CHANGE COLUMN `sector` `sector` VARCHAR(45) CHARACTER SET 'utf8mb3' NULL DEFAULT NULL ;
+CHANGE COLUMN `sector` `sector` VARCHAR(45) NULL DEFAULT NULL ;
 
-ALTER SCHEMA `whale_enterprises`  DEFAULT CHARACTER SET utf8  DEFAULT COLLATE utf8_general_ci ;

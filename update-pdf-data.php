@@ -194,14 +194,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <h1>
                             Update Details of <?php echo $row['drawing_number'] ?>
                         </h1><?php
-                                if ($row['file'] == 'not_uploaded.pdf') { ?>
+                                if ($row['file'] == 'not_uploaded.pdf') {
+                                    $desc = $row['description'];
+                                ?>
                             <form action="action.php" id="myForm" method="post" enctype="multipart/form-data">
                                 <label>Drawing Number</label>
                                 <input type="text" class="form-control" id="drawing-number" name="drawing_number" placeholder="Enter Drawing Name" value="<?php echo $row['drawing_number'] ?>" readonly><br />
                                 <label>Revision Number</label>
                                 <input type="text" class="form-control" name="revision_number" placeholder="Enter Revision Number" value="<?php echo $row['revision_number'] ?>" required><br />
                                 <label>Description</label>
-                                <input type="text" class="form-control" name="description" placeholder="Enter Description" value="<?php echo $row['description'] ?>" required><br />
+                                <input type="text" class="form-control" name="description" placeholder="Enter Description" value='<?php echo $desc; ?>' required><br />
                                 <br />
                                 <div class="select-dropdown">
                                     <div class="select-dropdown__header">
@@ -220,7 +222,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         for ($i = 0; $i < $length; $i++) {
                                         ?>
                                             <label>
-                                                <input type="checkbox" value="<?php echo $multi_sector[$i] ?>" />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $multi_sector[$i] ?>
+                                                <input type="checkbox" value='<?php echo $multi_sector[$i] ?>' />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<?php echo $multi_sector[$i] ?>
                                             </label>
                                         <?php
                                             unset($multi_sector[$i]);
@@ -243,14 +245,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                     </div>
                                 <?php } ?>
                             </form>
-                        <?php } else { ?>
+                        <?php } else {
+                                    $desc = $row['description'];
+                        ?>
                             <form action="action.php" id="myForm" method="post">
                                 <label>Drawing Number</label>
                                 <input type="text" class="form-control" id="drawing-number" name="drawing_number" placeholder="Enter Drawing Name" value="<?php echo $row['drawing_number'] ?>" readonly><br />
                                 <label>Revision Number</label>
                                 <input type="text" class="form-control" name="revision_number" placeholder="Enter Revision Number" value="<?php echo $row['revision_number'] ?>" required><br />
                                 <label>Description</label>
-                                <input type="text" class="form-control" name="description" placeholder="Enter Description" value="<?php echo $row['description'] ?>" required><br />
+                                <input type="text" class="form-control" name="description" placeholder="Enter Description" value='<?php echo $desc ?>' required><br />
                                 <br />
                                 <div class="select-dropdown">
                                     <div class="select-dropdown__header">
